@@ -29,14 +29,17 @@ public abstract class Parameterization extends CalculationNode {
 
     private double[][] birthRates, deathRates, samplingRates, removalProbs, rhoValues;
     private double[][][] migRates, crossBirthRates;
+    private double[][][][] cladogeneticBirthRates;
 
     private double[][] storedBirthRates, storedDeathRates, storedSamplingRates,
             storedRemovalProbs, storedRhoValues;
     private double[][][] storedMigRates, storedCrossBirthRates;
+    private double[][][][] storedCladogeneticBirthRates;
 
     final static double[] EMPTY_TIME_ARRAY = new double[0];
     double[] ZERO_VALUE_ARRAY;
     double[][] ZERO_VALUE_MATRIX;
+    double[][][] ZERO_VALUE_3DMATRIX;
 
     TypeSet typeSet;
 
@@ -48,6 +51,7 @@ public abstract class Parameterization extends CalculationNode {
         nTypes = typeSet.getNTypes();
         ZERO_VALUE_ARRAY = new double[nTypes];
         ZERO_VALUE_MATRIX = new double[nTypes][nTypes];
+        ZERO_VALUE_3DMATRIX = new double[nTypes][nTypes][nTypes];
 
         dirty = true;
     }
@@ -55,6 +59,7 @@ public abstract class Parameterization extends CalculationNode {
     public abstract double[] getBirthRateChangeTimes();
     public abstract double[] getMigRateChangeTimes();
     public abstract double[] getCrossBirthRateChangeTimes();
+    public abstract double[] getCladogeneticBirthRateChangeTimes();
     public abstract double[] getDeathRateChangeTimes();
     public abstract double[] getSamplingRateChangeTimes();
     public abstract double[] getRemovalProbChangeTimes();
@@ -63,6 +68,7 @@ public abstract class Parameterization extends CalculationNode {
     protected abstract double[] getBirthRateValues(double time);
     protected abstract double[][] getMigRateValues(double time);
     protected abstract double[][] getCrossBirthRateValues(double time);
+    protected abstract double[][][] getCladogeneticBirthRateValues(double time);
     protected abstract double[] getDeathRateValues(double time);
     protected abstract double[] getSamplingRateValues(double time);
     protected abstract double[] getRemovalProbValues(double time);
@@ -101,6 +107,7 @@ public abstract class Parameterization extends CalculationNode {
             birthRates = new double[intervalEndTimes.length][nTypes];
             migRates = new double[intervalEndTimes.length][nTypes][nTypes];
             crossBirthRates = new double[intervalEndTimes.length][nTypes][nTypes];
+            cladogeneticBirthRates = new double[intervalEndTimes.length][nTypes][nTypes][nTypes];
             deathRates = new double[intervalEndTimes.length][nTypes];
             samplingRates = new double[intervalEndTimes.length][nTypes];
             removalProbs = new double[intervalEndTimes.length][nTypes];
@@ -109,6 +116,7 @@ public abstract class Parameterization extends CalculationNode {
             storedBirthRates = new double[intervalEndTimes.length][nTypes];
             storedMigRates = new double[intervalEndTimes.length][nTypes][nTypes];
             storedCrossBirthRates = new double[intervalEndTimes.length][nTypes][nTypes];
+            storedCladogeneticBirthRates = new double[intervalEndTimes.length][nTypes][nTypes][nTypes];
             storedDeathRates = new double[intervalEndTimes.length][nTypes];
             storedSamplingRates = new double[intervalEndTimes.length][nTypes];
             storedRemovalProbs = new double[intervalEndTimes.length][nTypes];
@@ -135,6 +143,7 @@ public abstract class Parameterization extends CalculationNode {
         addTimes(getMigRateChangeTimes());
         addTimes(getBirthRateChangeTimes());
         addTimes(getCrossBirthRateChangeTimes());
+        addTimes(getCladogeneticBirthRateChangeTimes());
         addTimes(getDeathRateChangeTimes());
         addTimes(getSamplingRateChangeTimes());
         addTimes(getRemovalProbChangeTimes());
@@ -199,6 +208,14 @@ public abstract class Parameterization extends CalculationNode {
                 System.arraycopy(migRateMatrix[i], 0, migRates[interval][i], 0, nTypes);
                 System.arraycopy(crossBirthRateMatrix[i], 0, crossBirthRates[interval][i], 0, nTypes);
             }
+
+            double[][][] cladogeneticBirthRate3DMatrix = getCladogeneticBirthRateValues(t);
+            for (int i = 0; i < nTypes; i++) {
+                for (int j = 0; j < nTypes; j++) {
+                    System.arraycopy(cladogeneticBirthRate3DMatrix[i][j], 0, cladogeneticBirthRates[interval][i][j], 0, nTypes);
+                }
+            }
+
         }
     }
 
@@ -242,6 +259,12 @@ public abstract class Parameterization extends CalculationNode {
         update();
 
         return crossBirthRates;
+    }
+
+    public double[][][][] getCladogeneticBirthRates() {
+        update();
+
+        return cladogeneticBirthRates;
     }
 
     /**
@@ -311,6 +334,12 @@ public abstract class Parameterization extends CalculationNode {
                 System.arraycopy(migRates[interval][fromType], 0, storedMigRates[interval][fromType], 0, nTypes);
                 System.arraycopy(crossBirthRates[interval][fromType], 0, storedCrossBirthRates[interval][fromType], 0, nTypes);
             }
+
+            for (int fromType=0; fromType<nTypes; fromType++) {
+                for (int firstChildType = 0; firstChildType < nTypes; firstChildType++) {
+                    System.arraycopy(cladogeneticBirthRates[interval][fromType][firstChildType], 0, storedCladogeneticBirthRates[interval][fromType][firstChildType], 0, nTypes);
+                }
+            }
         }
 
         super.store();
@@ -320,6 +349,7 @@ public abstract class Parameterization extends CalculationNode {
     protected void restore() {
         double[][] vectorTmp;
         double[][][] matrixTmp;
+        double [][][][] matrix3DTmp;
 
         vectorTmp = birthRates;
         birthRates = storedBirthRates;
@@ -348,6 +378,10 @@ public abstract class Parameterization extends CalculationNode {
         matrixTmp = crossBirthRates;
         crossBirthRates = storedCrossBirthRates;
         storedCrossBirthRates = matrixTmp;
+
+        matrix3DTmp = cladogeneticBirthRates;
+        cladogeneticBirthRates = storedCladogeneticBirthRates;
+        storedCladogeneticBirthRates = matrix3DTmp;
 
         super.restore();
     }

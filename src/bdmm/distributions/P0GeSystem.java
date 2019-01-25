@@ -42,12 +42,17 @@ public class P0GeSystem extends P0System {
 			    if (i==j)
 			        continue;
 
-
                 yDot[i] += b_ij[interval][i][j]*y[i];
                 yDot[i] -= b_ij[interval][i][j]*y[i]*y[j];
 
                 yDot[i] += M[interval][i][j] * y[i];
                 yDot[i] -= M[interval][i][j] * y[j];
+
+                //TODO check that there is no 0.5 factor that should come in here (or for coherence in b_ij) due to children not being ordered
+                for (int k = 0; k < nTypes; k++) {
+                    yDot[i] += clado_b[interval][i][j][k]*y[i];
+                    yDot[i] -= clado_b[interval][i][j][k]*y[j]*y[k];
+                }
 			}
 
 			/*  ge equations: (dim .. 2*dim-1) */
@@ -67,6 +72,13 @@ public class P0GeSystem extends P0System {
 
                 yDot[nTypes + i] += M[interval][i][j] * y[nTypes + i];
                 yDot[nTypes + i] -= M[interval][i][j] * y[nTypes + j];
+
+                //TODO check that there is no 0.5 factor that should come in here (or for coherence in b_ij) due to children not being ordered
+                for (int k = 0; k < nTypes; k++) {
+                    yDot[nTypes + i] += clado_b[interval][i][j][k]*y[nTypes + i];
+                    yDot[nTypes + i] -= clado_b[interval][i][j][k] *
+                            (y[j]*y[nTypes + k] + y[k]*y[nTypes + j]);
+                }
 			}
 		}
 	}

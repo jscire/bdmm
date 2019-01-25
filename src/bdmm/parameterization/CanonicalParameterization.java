@@ -26,6 +26,9 @@ public class CanonicalParameterization extends Parameterization {
     public Input<SkylineMatrixParameter> crossBirthRateInput = new Input<>("birthRateAmongDemes",
             "Birth rate among demes skyline.");
 
+    public Input<Skyline3DMatrixParameter> cladogeneticBirthRateInput = new Input<>("cladogeneticBirthRate",
+            "Cladogenic birth rate skyline.");
+
     @Override
     public double[] getMigRateChangeTimes() {
         if (migRateInput.get() == null)
@@ -45,6 +48,14 @@ public class CanonicalParameterization extends Parameterization {
             return EMPTY_TIME_ARRAY;
 
         return crossBirthRateInput.get().getChangeTimes();
+    }
+
+    @Override
+    public double[] getCladogeneticBirthRateChangeTimes() {
+        if (cladogeneticBirthRateInput.get() == null)
+            return EMPTY_TIME_ARRAY;
+
+        return cladogeneticBirthRateInput.get().getChangeTimes();
     }
 
     @Override
@@ -89,6 +100,14 @@ public class CanonicalParameterization extends Parameterization {
             return ZERO_VALUE_MATRIX;
 
         return crossBirthRateInput.get().getValuesAtTime(time);
+    }
+
+    @Override
+    protected double[][][] getCladogeneticBirthRateValues(double time) {
+        if (cladogeneticBirthRateInput.get() == null)
+            return ZERO_VALUE_3DMATRIX;
+
+        return cladogeneticBirthRateInput.get().getValuesAtTime(time);
     }
 
     @Override

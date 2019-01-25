@@ -62,6 +62,11 @@ public class EpiParameterization extends Parameterization {
         return crossBirthRateChangeTimes;
     }
 
+    @Override
+    public double[] getCladogeneticBirthRateChangeTimes() {
+        return EMPTY_TIME_ARRAY;
+    }
+
 
     private double[] deathRateChangeTimes;
 
@@ -136,6 +141,11 @@ public class EpiParameterization extends Parameterization {
         }
 
         return res;
+    }
+
+    @Override
+    protected double[][][] getCladogeneticBirthRateValues(double time) {
+        return ZERO_VALUE_3DMATRIX;
     }
 
     @Override

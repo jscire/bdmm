@@ -16,6 +16,7 @@ public class P0System implements FirstOrderDifferentialEquations {
 
 	public double[][] b, d, s, r,rho;
 	public double[][][] M, b_ij;
+	public double[][][][] clado_b; //TODO change variable name?
 
     public double totalProcessLength;
 
@@ -42,6 +43,8 @@ public class P0System implements FirstOrderDifferentialEquations {
 
 		this.M = parameterization.getMigRates();
         this.b_ij = parameterization.getCrossBirthRates();
+
+        this.clado_b = parameterization.getCladogeneticBirthRates();
 
         this.totalProcessLength = parameterization.getTotalProcessLength();
 
@@ -82,6 +85,12 @@ public class P0System implements FirstOrderDifferentialEquations {
 
                 yDot[i] += M[interval][i][j] * y[i];
                 yDot[i] -= M[interval][i][j] * y[j];
+
+                //TODO check that there is no 0.5 factor that should come in here (or for coherence in b_ij) due to children not being ordered
+				for (int k = 0; k < nTypes; k++) {
+					yDot[i] += clado_b[interval][i][j][k]*y[i];
+					yDot[i] -= clado_b[interval][i][j][k]*y[j]*y[k];
+				}
 			}
 		}
 

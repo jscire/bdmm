@@ -86,7 +86,6 @@ public class P0System implements FirstOrderDifferentialEquations {
                 yDot[i] += M[interval][i][j] * y[i];
                 yDot[i] -= M[interval][i][j] * y[j];
 
-                //TODO check that there is no 0.5 factor that should come in here (or for coherence in b_ij) due to children not being ordered
 				for (int k = 0; k < nTypes; k++) {
 					yDot[i] += clado_b[interval][i][j][k]*y[i];
 					yDot[i] -= clado_b[interval][i][j][k]*y[j]*y[k];

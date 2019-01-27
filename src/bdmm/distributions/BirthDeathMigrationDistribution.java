@@ -391,11 +391,9 @@ public class BirthDeathMigrationDistribution extends SpeciesTreeDistribution {
                                     * (1 - system.r[intervalIdx][type]));
 
                         } else {
-                            // TODO COME BACK AND CHANGE (can be dealt with with getAllPInitialConds)
                             state.p0[type] = g.p0[type] * (1 - system.rho[intervalIdx][type]);
                             state.ge[type] = g.ge[type].scalarMultiplyBy(system.rho[intervalIdx][type]
                                     * (1 - system.r[intervalIdx][type]));
-
                         }
                     }
                 } else {
@@ -409,7 +407,6 @@ public class BirthDeathMigrationDistribution extends SpeciesTreeDistribution {
 //					System.out.println("SA but not rho sampled");
 
                     } else {
-                        // TODO COME BACK AND CHANGE (can be dealt with with getAllPInitialConds)
                         state.p0[saNodeType] = g.p0[saNodeType]
                                 * (1 - system.rho[intervalIdx][saNodeType]);
                         state.ge[saNodeType] = g.ge[saNodeType]
@@ -428,7 +425,7 @@ public class BirthDeathMigrationDistribution extends SpeciesTreeDistribution {
 
                 P0GeState childState1 = null, childState2 = null;
 
-                // evaluate if the next step in the traversal should be split between one new thread and the currrent thread and run in parallel.
+                // evaluate if the next step in the traversal should be split between one new thread and the current thread and run in parallel.
 
                 if (isParallelizedCalculation
                         && weightOfNodeSubTree[node.getChild(indexFirstChild).getNr()] > parallelizationThreshold
@@ -481,6 +478,18 @@ public class BirthDeathMigrationDistribution extends SpeciesTreeDistribution {
                                         .addTo(childState1.ge[otherChildType].multiplyBy(childState2.ge[childType]))
                                         .scalarMultiplyBy(0.5 * system.b_ij[intervalIdx][childType][otherChildType]));
                     }
+
+                    for (int otherChildType = 0; otherChildType < parameterization.getNTypes(); otherChildType++) {
+                        if (otherChildType == childType)
+                            continue;
+
+                        state.ge[childType] = state.ge[childType]
+                                .addTo((childState1.ge[childType].multiplyBy(childState2.ge[otherChildType]))
+                                        .addTo(childState1.ge[otherChildType].multiplyBy(childState2.ge[childType]))
+                                        .scalarMultiplyBy(0.5 * system.b_ij[intervalIdx][childType][otherChildType]));
+                    }
+
+
 
 
                     if (Double.isInfinite(state.p0[childType])) {
@@ -690,7 +699,7 @@ public class BirthDeathMigrationDistribution extends SpeciesTreeDistribution {
             system.setInterval(thisInterval);
         }
 
-         // solve PG , store solution temporarily integrationResults
+         // solve PG
         if (Utils.greaterThanWithPrecision(thisTime, tTop))
             pgScaled = system.safeIntegrate(pgScaled, thisTime, tTop);
 
@@ -700,7 +709,7 @@ public class BirthDeathMigrationDistribution extends SpeciesTreeDistribution {
 
 
     /**
-     * Perform an initial traversal of the tree to get the 'weights' (sum of all its edges lengths) of all sub-trees
+     * Perform an initial traversal of the tree to get the 'weights' (sum of all edge lengths) of all subtrees
      * Useful for performing parallelized calculations on the tree.
      * The weights of the subtrees tell us the depth at which parallelization should stop, so as to not parallelize on subtrees that are too small.
      * Results are stored in 'weightOfNodeSubTree' array

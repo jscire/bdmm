@@ -30,7 +30,8 @@ public class HiddenParameterization extends CanonicalParameterization {
 	double[][] preOmissionMatrixRates;
 	double[][] omittedMatrixRates;
 	
-	boolean[] birthRatesOmitted;
+	boolean[] ratesToOmit;
+	boolean[][] matrixRatesToOmit;
 	
 	@Override
     public void initAndValidate() {
@@ -39,7 +40,9 @@ public class HiddenParameterization extends CanonicalParameterization {
 		
 		omittedRates = new double[nTypes];
 		omittedMatrixRates = new double[nTypes][nTypes];
-		birthRatesOmitted = new boolean[nObsTypes];
+		
+		ratesToOmit = new boolean[nTypes];
+		matrixRatesToOmit = new boolean[nTypes][nTypes]; // could change this
 		
 		ZERO_VALUE_ARRAY = new double[nTypes];
         ZERO_VALUE_MATRIX = new double[nTypes][nTypes];
@@ -80,10 +83,13 @@ public class HiddenParameterization extends CanonicalParameterization {
 		 * Birth and death rate masks
 		 */
 		for (int i=0; i<nObsTypes; i++) {
+			ratesToOmit[i] = false; // all observed rates are always included
+			
+			// but the hidden might or not be included
 			if (hiddenTraitFlag[i] == 1 || hiddenTraitFlag[i] == 2) {
-				birthRatesOmitted[i] = false;
+				ratesToOmit[nObsTypes+i] = false;
 				nTypes++;
-			} else { birthRatesOmitted[i] = true; }
+			} else { ratesToOmit[nObsTypes+i] = true; }
 		}
 		
 		/*
@@ -92,16 +98,16 @@ public class HiddenParameterization extends CanonicalParameterization {
 		
 	}
 	
-	private double[] omitRates(double[] ratesToOmit) {
+	private double[] omitRates(double[] allUntouchedRates, boolean[] ratesToOmit) {
 		
 		// always return the rates for observed types
-        System.arraycopy(ratesToOmit, 0, omittedRates, 0, nObsTypes);
+        System.arraycopy(allUntouchedRates, 0, omittedRates, 0, nObsTypes);
         
         // now grabbing only the hidden types the current model has
         int j=0;
-        for (int i=0; i<birthRatesOmitted.length; i++) {
-        	if (!birthRatesOmitted[i]) {
-        		omittedRates[j] = ratesToOmit[nObsTypes+i];
+        for (int i=0; i<ratesToOmit.length; i++) {
+        	if (!ratesToOmit[i]) {
+        		omittedRates[j] = allUntouchedRates[nObsTypes+i];
         		j++;
         	}
         }
@@ -109,7 +115,7 @@ public class HiddenParameterization extends CanonicalParameterization {
         return omittedRates;
 	}
 	
-	private double[][] omitMatrixRates(double[][] ratesToOmit) {
+	private double[][] omitMatrixRates(double[][] allUntouchedMatrixRates, boolean[][] matrixRatesToOmit) {
 		// TODO: do things to omitted2Drates
 		return omittedMatrixRates;
 	}
@@ -167,7 +173,7 @@ public class HiddenParameterization extends CanonicalParameterization {
 		if (!modelChecked) {
 			checkModel(); // updates ommited rates
 		}
-		omittedRates = omitRates(birthRateInput.get().getValuesAtTime(time));
+		omittedRates = omitRates(birthRateInput.get().getValuesAtTime(time), ratesToOmit);
 		
 		return omittedRates;
 	}
@@ -177,7 +183,7 @@ public class HiddenParameterization extends CanonicalParameterization {
 		if (!modelChecked) {
 			checkModel(); // updates ommited rates
 		}
-		omittedMatrixRates = omitMatrixRates(migRateInput.get().getValuesAtTime(time));
+		omittedMatrixRates = omitMatrixRates(migRateInput.get().getValuesAtTime(time), matrixRatesToOmit);
 		
 		return omittedMatrixRates;
 	}

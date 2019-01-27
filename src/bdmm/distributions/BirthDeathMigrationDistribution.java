@@ -487,22 +487,27 @@ public class BirthDeathMigrationDistribution extends SpeciesTreeDistribution {
                                         .addTo(childState1.ge[otherChildType].multiplyBy(childState2.ge[childType]))
                                         .scalarMultiplyBy(0.5 * system.b_ij[intervalIdx][childType][otherChildType]));
                     }
-
-                    for (int otherChildType = 0; otherChildType < parameterization.getNTypes(); otherChildType++) {
-                        if (otherChildType == childType)
-                            continue;
-
-                        state.ge[childType] = state.ge[childType]
-                                .addTo((childState1.ge[childType].multiplyBy(childState2.ge[otherChildType]))
-                                        .addTo(childState1.ge[otherChildType].multiplyBy(childState2.ge[childType]))
-                                        .scalarMultiplyBy(0.5 * system.b_ij[intervalIdx][childType][otherChildType]));
-                    }
-
-
-
-
                     if (Double.isInfinite(state.p0[childType])) {
                         throw new RuntimeException("infinite likelihood");
+                    }
+                }
+
+                for (int parentType = 0; parentType < parameterization.getNTypes(); parentType++) {
+
+                    for (int childType = 0; childType < parameterization.getNTypes(); childType++) {
+
+                        for (int otherChildType = 0; otherChildType < parameterization.getNTypes(); otherChildType++) {
+                            if(parentType == childType && parentType == otherChildType)
+                                continue;
+
+                            if(childType > otherChildType) // by definition, b_ijk is 0 if k > j
+                                continue;
+
+                            state.ge[parentType] = state.ge[parentType]
+                                    .addTo((childState1.ge[childType].multiplyBy(childState2.ge[otherChildType]))
+                                            .addTo(childState1.ge[otherChildType].multiplyBy(childState2.ge[childType]))
+                                            .scalarMultiplyBy(0.5 * system.clado_b[intervalIdx][parentType][childType][otherChildType]));
+                        }
                     }
                 }
             }

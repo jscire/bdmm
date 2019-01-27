@@ -1,3 +1,7 @@
+/**
+ * Created by Fabio K. Mendes (fkmendes)
+ */
+
 package bdmm.parameterization;
 
 import beast.core.BEASTObject;

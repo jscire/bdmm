@@ -4,6 +4,8 @@
 
 package bdmm.parameterization;
 
+import java.util.Arrays;
+
 import beast.core.Input;
 import beast.core.parameter.IntegerParameter;
 
@@ -32,6 +34,7 @@ public class HiddenParameterization extends CanonicalParameterization {
 	
 	boolean[] ratesToOmit;
 	boolean[][] matrixRatesToOmit;
+	boolean isCID = false;
 	
 	@Override
     public void initAndValidate() {
@@ -68,7 +71,7 @@ public class HiddenParameterization extends CanonicalParameterization {
 			
 			hiddenTraitFlag = hiddenTraitFlagInput.get().getValues();
 			cidFlag = hiddenTraitFlagInput.get().getValue();
-			
+			isCID = (cidFlag == 1) ? true:false;
 			changeModel();
 		};
 		
@@ -98,16 +101,28 @@ public class HiddenParameterization extends CanonicalParameterization {
 		
 	}
 	
-	private double[] omitRates(double[] allUntouchedRates, boolean[] ratesToOmit) {
+	private double[] omitRates(double[] allUntouchedRates, boolean[] ratesToOmit, boolean isCID) {
 		
-		// always return the rates for observed types
-        System.arraycopy(allUntouchedRates, 0, omittedRates, 0, nObsTypes);
+		if (isCID) {
+			// take just first RealParameter inside allUntouchedRates
+			Arrays.fill(omittedRates, 0, nObsTypes-1, allUntouchedRates[0]); }
+		else { 
+			// always return the rates for observed types if not CID
+			System.arraycopy(allUntouchedRates, 0, omittedRates, 0, nObsTypes);
+		}
         
         // now grabbing only the hidden types the current model has
         int j=0;
         for (int i=0; i<ratesToOmit.length; i++) {
         	if (!ratesToOmit[i]) {
-        		omittedRates[j] = allUntouchedRates[nObsTypes+i];
+        		if (isCID) {
+        			// take just first RealParameter of hidden type inside allUntouchedRates
+            		omittedRates[nObsTypes+j] = allUntouchedRates[nObsTypes+i];
+            	}
+        		else {
+        			omittedRates[nObsTypes+j] = allUntouchedRates[nObsTypes+i];
+        		}
+        		
         		j++;
         	}
         }

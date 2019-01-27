@@ -1,20 +1,32 @@
 package bdmm.parameterization;
 
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import beast.core.Input;
 import beast.core.parameter.RealParameter;
 
 /**
- * This class is a first attempt at having inputs that represent claSSE-type/cladogenetic birth rates
+ * This class is a first attempt at having inputs that represent ClaSSE-type/cladogenetic birth rates
  * It may later be replaced by sth smarter, that is not so tedious to set up for the user.
  */
 public class Skyline3DMatrixParameter extends SkylineParameter {
 
-    int nTypes;
-
+	final public Input<List<Triplet>> tripletsInput = new Input<>("tripletList", "List of Triplet objects that contain states of a parent and its children, and the triplet type", new ArrayList<>());
+	final public Input<String[]> tripletOrderInput = new Input<>("tripletTypeList", "List of triplet type strings, one per real parameter (rate) in a single interval (order will be repeated in all intervals).");	
+    
+	int nTypes;
 
     double[][][][] values, storedValues;
     double[][][] valuesAtTime;
 
     boolean inputIsScalar;
+    
+    private List<Triplet> triplets;
+    private String[] tripletOrder;
+    private HashMap<String, Integer> tripletTypeRealParameterMap = new HashMap<>(); // ctor populates this
 
     public Skyline3DMatrixParameter() { }
 
@@ -60,6 +72,18 @@ public class Skyline3DMatrixParameter extends SkylineParameter {
         storedValues = new double[nIntervals][nTypes][nTypes][nTypes];
 
         valuesAtTime = new double[nTypes][nTypes][nTypes];
+        		
+        /*
+         * Validating triplets below
+         */
+        triplets = tripletsInput.get(); // need to write a test that makes sure all triplets have a valid triplet name (stored in tripletOrder below)
+        
+        tripletOrder = tripletOrderInput.get();
+        if (tripletOrder.length != (nIntervals * totalElementCount)) {
+        	throw new IllegalArgumentException("The number of triplets in tripletsInput does not match the number of specified rates.");
+        }
+        
+        populateValues();
     }
 
     @Override
@@ -110,6 +134,29 @@ public class Skyline3DMatrixParameter extends SkylineParameter {
 
     public int getNTypes() {
         return nTypes;
+    }
+
+    public void populateValues () {
+    	// build hashmap with "triplet type":index
+    	for (int i=0; i<tripletOrder.length; i++) {
+        	tripletTypeRealParameterMap.put(tripletOrder[i], i);
+        }
+     
+    	// now populate values[interval][parent][left][right]
+    	int i,j,k, tripletTypeIdx;
+    	String tripletType;
+    	for (Triplet triplet: triplets) {
+    		int[] types = triplet.getTriplet();
+    		i = types[0];
+    		j = types[1];
+    		k = types[2];
+    		tripletType = triplet.getTripletType();
+    		tripletTypeIdx = tripletTypeRealParameterMap.get(tripletType);
+    		
+    		for (int interval=0; interval<nIntervals; interval++) {
+        		values[interval][i][j][k] = rateValuesInput.get().getValues()[tripletTypeIdx];
+        	}
+    	}
     }
 
     @Override

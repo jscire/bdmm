@@ -64,8 +64,7 @@ public class Skyline3DMatrixParameter extends SkylineParameter {
                         "an incorrect number of elements.");
             }
         } else {
-            //TODO WRONG: adapt to 3 dimension array!!!!!!!!!
-            nTypes = (int) Math.round((1 + Math.sqrt(1 + 4 * elementsPerMatrix)) / 2);
+            throw new IllegalArgumentException("Number of types must be input when using Skyline3DMatrixParameter"); //TODO implement a way to infer the number of types
         }
 
         values = new double[nIntervals][nTypes][nTypes][nTypes];

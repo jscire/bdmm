@@ -9,10 +9,10 @@ import beast.core.parameter.IntegerParameter;
 
 public class HiddenParameterization extends CanonicalParameterization {
 
-	public Input<SkylineVectorHiddenParameter> birthRateInput = new Input<>("birthRate",
+	public Input<SkylineVectorParameter> birthRateInput = new Input<>("birthRate",
             "Birth rate skyline.", Input.Validate.REQUIRED);
 	
-	public Input<SkylineMatrixHiddenParameter> migRateInput = new Input<>("migrationRate",
+	public Input<SkylineMatrixParameter> migRateInput = new Input<>("migrationRate",
             "Migration rate skyline.");
 	
 	final public Input<IntegerParameter> hiddenTraitFlagInput = new Input<>("hiddenTraitFlag", "Integers flag that determine if hidden trait exists, how many types it has, and the association of its types and the observed types: 0=No hidden type for the observed state, 1/2=Observed state has hidden type associated to it.");
@@ -22,7 +22,13 @@ public class HiddenParameterization extends CanonicalParameterization {
 	private int nObsTypes;
 	private Integer[] hiddenTraitFlag;
 	private Integer cidFlag;
-	private boolean flagDirty = true;
+	private boolean modelChecked = false;
+	
+	double[] preOmissionBirthRates, preOmissionDeathRates;
+	double[] omittedRates;
+	
+	double[][] preOmissionMatrixRates;
+	double[][] omittedMatrixRates;
 	
 	boolean[] birthRatesOmitted;
 	
@@ -31,6 +37,8 @@ public class HiddenParameterization extends CanonicalParameterization {
 		nTypes = nTypesInput.get();
 		nObsTypes = nTypes/2; // initialize with all hidden types
 		
+		omittedRates = new double[nTypes];
+		omittedMatrixRates = new double[nTypes][nTypes];
 		birthRatesOmitted = new boolean[nObsTypes];
 		
 		ZERO_VALUE_ARRAY = new double[nTypes];
@@ -61,7 +69,7 @@ public class HiddenParameterization extends CanonicalParameterization {
 			changeModel();
 		};
 		
-		flagDirty = false;
+		modelChecked = true;
 		return;
 	}
 	
@@ -82,6 +90,28 @@ public class HiddenParameterization extends CanonicalParameterization {
 		 * Migration rate mask
 		 */
 		
+	}
+	
+	private double[] omitRates(double[] ratesToOmit) {
+		
+		// always return the rates for observed types
+        System.arraycopy(ratesToOmit, 0, omittedRates, 0, nObsTypes);
+        
+        // now grabbing only the hidden types the current model has
+        int j=0;
+        for (int i=0; i<birthRatesOmitted.length; i++) {
+        	if (!birthRatesOmitted[i]) {
+        		omittedRates[j] = ratesToOmit[nObsTypes+i];
+        		j++;
+        	}
+        }
+        
+        return omittedRates;
+	}
+	
+	private double[][] omitMatrixRates(double[][] ratesToOmit) {
+		// TODO: do things to omitted2Drates
+		return omittedMatrixRates;
 	}
 	
 	@Override
@@ -134,19 +164,22 @@ public class HiddenParameterization extends CanonicalParameterization {
 
 	@Override
 	protected double[] getBirthRateValues(double time) {
-		checkModel(); // updates rate masks if necessary
+		if (!modelChecked) {
+			checkModel(); // updates ommited rates
+		}
+		omittedRates = omitRates(birthRateInput.get().getValuesAtTime(time));
 		
-		/*
-		 * IMPORTANT: whoever uses this return needs to know only
-		 * to use the first nType elements
-		 */
-		return birthRateInput.get().getValuesAtTime(time, birthRatesOmitted);
+		return omittedRates;
 	}
 
 	@Override
 	protected double[][] getMigRateValues(double time) {
-		// TODO Auto-generated method stub
-		return null;
+		if (!modelChecked) {
+			checkModel(); // updates ommited rates
+		}
+		omittedMatrixRates = omitMatrixRates(migRateInput.get().getValuesAtTime(time));
+		
+		return omittedMatrixRates;
 	}
 
 	@Override

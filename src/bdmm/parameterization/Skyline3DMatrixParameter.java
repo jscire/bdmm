@@ -8,13 +8,13 @@ import beast.core.Input;
 import beast.core.parameter.RealParameter;
 
 /**
- * This class is a first attempt at having inputs that represent claSSE-type/cladogenetic birth rates
+ * This class is a first attempt at having inputs that represent ClaSSE-type/cladogenetic birth rates
  * It may later be replaced by sth smarter, that is not so tedious to set up for the user.
  */
 public class Skyline3DMatrixParameter extends SkylineParameter {
 
-	final public Input<List<Triplet>> tripletsInput = new Input<>("List of triplets", "List of Triplet objects that contain states of a parent and its children, and the triplet type", new ArrayList<>());
-	final public Input<String[]> tripletOrderInput = new Input<>("List of different triplet types", "List of triplet type strings, one per real parameter (rate) in a single interval (order will be repeated in all intervals).");	
+	final public Input<List<Triplet>> tripletsInput = new Input<>("tripletList", "List of Triplet objects that contain states of a parent and its children, and the triplet type", new ArrayList<>());
+	final public Input<String[]> tripletOrderInput = new Input<>("tripletTypeList", "List of triplet type strings, one per real parameter (rate) in a single interval (order will be repeated in all intervals).");	
     
 	int nTypes;
 

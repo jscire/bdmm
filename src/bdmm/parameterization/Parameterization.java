@@ -21,7 +21,7 @@ public abstract class Parameterization extends CalculationNode {
             "If specified, condition on root time rather than origin time.",
             Input.Validate.XOR, originInput);
 
-    private boolean dirty;
+    protected boolean dirty;
 
     private SortedSet<Double> intervalEndTimesSet = new TreeSet<>();
 
@@ -98,7 +98,7 @@ public abstract class Parameterization extends CalculationNode {
     private void update() {
         if (!dirty)
             return;
-
+        
         updateModelEventTimes();
 
         if (birthRates == null) {
@@ -137,7 +137,7 @@ public abstract class Parameterization extends CalculationNode {
     }
 
     private void updateModelEventTimes() {
-
+    	
         intervalEndTimesSet.clear();
 
         addTimes(getMigRateChangeTimes());
@@ -206,13 +206,13 @@ public abstract class Parameterization extends CalculationNode {
             double[][] crossBirthRateMatrix = getCrossBirthRateValues(t);
             for (int i=0; i<nTypes; i++) {
                 System.arraycopy(migRateMatrix[i], 0, migRates[interval][i], 0, nTypes);
-                System.arraycopy(crossBirthRateMatrix[i], 0, crossBirthRates[interval][i], 0, nTypes);
+                 System.arraycopy(crossBirthRateMatrix[i], 0, crossBirthRates[interval][i], 0, nTypes);
             }
 
             double[][][] cladogeneticBirthRate3DMatrix = getCladogeneticBirthRateValues(t);
             for (int i = 0; i < nTypes; i++) {
                 for (int j = 0; j < nTypes; j++) {
-                    System.arraycopy(cladogeneticBirthRate3DMatrix[i][j], 0, cladogeneticBirthRates[interval][i][j], 0, nTypes);
+                     System.arraycopy(cladogeneticBirthRate3DMatrix[i][j], 0, cladogeneticBirthRates[interval][i][j], 0, nTypes);
                 }
             }
 

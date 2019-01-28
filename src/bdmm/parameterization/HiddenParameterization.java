@@ -33,14 +33,16 @@ public class HiddenParameterization extends CanonicalParameterization {
 	double[][] omittedMatrixRates;
 	
 	boolean[] ratesToOmit;
-	boolean[][] matrixRatesToOmit;
 	boolean isCID = false;
+	
+	boolean[][] matrixRatesToOmit;
+	boolean[] isMigRateSymmetric;
 	
 	@Override
     public void initAndValidate() {
 		nTypes = nTypesInput.get();
 		nObsTypes = nTypes/2; // initialize with all hidden types
-		
+		isMigRateSymmetric = new boolean[nObsTypes];
 		omittedRates = new double[nTypes];
 		omittedMatrixRates = new double[nTypes][nTypes];
 		
@@ -80,25 +82,56 @@ public class HiddenParameterization extends CanonicalParameterization {
 	}
 	
 	private void changeModel() {
-		nTypes = nObsTypes;
-		
-		/*
-		 * Birth and death rate masks
-		 */
-		for (int i=0; i<nObsTypes; i++) {
-			ratesToOmit[i] = false; // all observed rates are always included
-			
-			// but the hidden might or not be included
-			if (hiddenTraitFlag[i] == 1 || hiddenTraitFlag[i] == 2) {
-				ratesToOmit[nObsTypes+i] = false;
-				nTypes++;
-			} else { ratesToOmit[nObsTypes+i] = true; }
+		nTypes = 2 * nObsTypes; // start variable with all hidden types
+		Arrays.fill(ratesToOmit, false); // initialize by including all type birth and death rates
+		for (int i=0; i<matrixRatesToOmit.length; i++) {
+			Arrays.fill(matrixRatesToOmit[i], false); // initialize by including all type mig rates
 		}
 		
 		/*
+		 * Birth and death rates
+		 */
+		for (int i=0; i<nObsTypes; i++) {
+			if (hiddenTraitFlag[i] == 0) {
+				ratesToOmit[nObsTypes+i] = true;
+				nTypes--;
+			}
+			else if (hiddenTraitFlag[i] == 1) {
+				isMigRateSymmetric[i] = true; // for omitMatrixRates
+			}
+		}
+			
+		/*
 		 * Migration rate mask
 		 */
-		
+		for (int i=0; i<nTypes; i++) {
+			for (int j=0; j<nTypes; j++) {
+
+				if (i != j) {			
+					// upper right corner
+					if (i<nObsTypes && j>=nObsTypes) {
+						if (hiddenTraitFlag[j-nObsTypes] == 0) {
+							matrixRatesToOmit[i][j] = true;
+						}
+					}
+					
+					// bottom left corner
+					if (i>=nObsTypes) {
+						if (hiddenTraitFlag[i-nObsTypes] == 0) {
+							matrixRatesToOmit[i][j] = true;
+						}
+					}
+					
+					// bottom right corner
+					if (i>=nObsTypes && j>=nObsTypes) {
+						if ( (hiddenTraitFlag[j-nObsTypes] == 0) ||
+							 (hiddenTraitFlag[i-nObsTypes] == 0) ) {
+							matrixRatesToOmit[i][j] = true;
+						}
+					}
+				}
+			}
+		}
 	}
 	
 	private double[] omitRates(double[] allUntouchedRates, boolean[] ratesToOmit, boolean isCID) {
@@ -108,7 +141,7 @@ public class HiddenParameterization extends CanonicalParameterization {
 			Arrays.fill(omittedRates, 0, nObsTypes-1, allUntouchedRates[0]); }
 		else { 
 			// always return the rates for observed types if not CID
-			System.arraycopy(allUntouchedRates, 0, omittedRates, 0, nObsTypes);
+			System.arraycopy(omittedRates, 0, omittedRates, 0, nObsTypes);
 		}
         
         // now grabbing only the hidden types the current model has
@@ -117,7 +150,7 @@ public class HiddenParameterization extends CanonicalParameterization {
         	if (!ratesToOmit[i]) {
         		if (isCID) {
         			// take just first RealParameter of hidden type inside allUntouchedRates
-            		omittedRates[nObsTypes+j] = allUntouchedRates[nObsTypes+i];
+        			omittedRates[nObsTypes+j] = allUntouchedRates[nObsTypes+i];
             	}
         		else {
         			omittedRates[nObsTypes+j] = allUntouchedRates[nObsTypes+i];
@@ -130,8 +163,46 @@ public class HiddenParameterization extends CanonicalParameterization {
         return omittedRates;
 	}
 	
-	private double[][] omitMatrixRates(double[][] allUntouchedMatrixRates, boolean[][] matrixRatesToOmit) {
-		// TODO: do things to omitted2Drates
+	private double[][] omitMatrixRates(double[][] allUntouchedMatrixRates, boolean[][] matrixRatesToOmit, boolean[] isMigRateSymmetric) {
+		
+		/*
+		 *  First two for loops for looping over omittedMatrixRates
+		 *  (the 'return' matrix, i.e., matrix at time)
+		 *  
+		 *  Note that nTypes should have been updated to the right (current)
+		 *  value by the birth death part of changeModel()
+		 */
+		for (int i1=0; i1<nTypes; i1++) {
+			for (int j1=0; j1<nTypes; i1++) {
+				
+				/*
+				 * Second two loops for going over 'values[][] = allUntouchedMatrixRates'
+				 * and matrixRatesToOmit (we use both to populate 'return' matrix)
+				 */
+				for (int i2=0; i2<matrixRatesToOmit.length; i2++) {
+					for (int j2=0; j2<matrixRatesToOmit.length; j2++) {
+						
+						/*
+						 * First symmetrify (or not) allUntouchedMatrixRates (our source matrix)
+						 * 
+						 * Note that we are putting the top-right value on the bottom-left value,
+						 * so we are ignoring the "later" RealParameter entry that would go into
+						 * the bottom-left value of values[][] (i.e., allUntouchedMatrixRates)
+						 */
+						if (i2 >= nObsTypes && j2 < nObsTypes && isMigRateSymmetric[j2]) {
+							allUntouchedMatrixRates[i2+nObsTypes][j2] =
+									allUntouchedMatrixRates[j2+nObsTypes][i2];
+						}
+						
+						// now fill in!
+						if (!matrixRatesToOmit[i2][j2]) {
+							omittedMatrixRates[i1][j2] = allUntouchedMatrixRates[i2][j2];
+						}
+					}
+				}
+			}
+		}
+		
 		return omittedMatrixRates;
 	}
 	
@@ -183,14 +254,15 @@ public class HiddenParameterization extends CanonicalParameterization {
 		return null;
 	}
 
+	
 	@Override
 	protected double[] getBirthRateValues(double time) {
 		if (!modelChecked) {
 			checkModel(); // updates ommited rates
 		}
-		omittedRates = omitRates(birthRateInput.get().getValuesAtTime(time), ratesToOmit);
 		
-		return omittedRates;
+		// omitRates populates omittedRates and returns it
+		return omitRates(birthRateInput.get().getValuesAtTime(time), ratesToOmit, isCID);
 	}
 
 	@Override
@@ -198,9 +270,8 @@ public class HiddenParameterization extends CanonicalParameterization {
 		if (!modelChecked) {
 			checkModel(); // updates ommited rates
 		}
-		omittedMatrixRates = omitMatrixRates(migRateInput.get().getValuesAtTime(time), matrixRatesToOmit);
-		
-		return omittedMatrixRates;
+		return omitMatrixRates(migRateInput.get().getValuesAtTime(time), matrixRatesToOmit, isMigRateSymmetric);
+
 	}
 
 	@Override

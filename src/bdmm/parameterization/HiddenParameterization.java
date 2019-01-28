@@ -10,12 +10,6 @@ import beast.core.Input;
 import beast.core.parameter.IntegerParameter;
 
 public class HiddenParameterization extends CanonicalParameterization {
-
-	public Input<SkylineVectorParameter> birthRateInput = new Input<>("birthRate",
-            "Birth rate skyline.", Input.Validate.REQUIRED);
-	
-	public Input<SkylineMatrixParameter> migRateInput = new Input<>("migrationRate",
-            "Migration rate skyline.");
 	
 	final public Input<IntegerParameter> hiddenTraitFlagInput = new Input<>("hiddenTraitFlag", "Integers flag that determine if hidden trait exists, how many types it has, and the association of its types and the observed types: 0=No hidden type for the observed state, 1/2=Observed state has hidden type associated to it.");
 	
@@ -52,6 +46,8 @@ public class HiddenParameterization extends CanonicalParameterization {
 		ZERO_VALUE_ARRAY = new double[nTypes];
         ZERO_VALUE_MATRIX = new double[nTypes][nTypes];
         ZERO_VALUE_3DMATRIX = new double[nTypes][nTypes][nTypes];
+        
+        dirty = true;
 	}
 	
 	/*
@@ -69,10 +65,11 @@ public class HiddenParameterization extends CanonicalParameterization {
 	
 	private void checkModel() {
 		if (hiddenTraitFlagInput.get().isDirtyCalculation() ||
-				cidFlagInput.get().isDirtyCalculation()) {
+				cidFlagInput.get().isDirtyCalculation() ||
+				!modelChecked) {
 			
 			hiddenTraitFlag = hiddenTraitFlagInput.get().getValues();
-			cidFlag = hiddenTraitFlagInput.get().getValue();
+			cidFlag = cidFlagInput.get().getValue();
 			isCID = (cidFlag == 1) ? true:false;
 			changeModel();
 		};
@@ -136,32 +133,34 @@ public class HiddenParameterization extends CanonicalParameterization {
 	
 	private double[] omitRates(double[] allUntouchedRates, boolean[] ratesToOmit, boolean isCID) {
 		
-		if (isCID) {
-			// take just first RealParameter inside allUntouchedRates
-			Arrays.fill(omittedRates, 0, nObsTypes-1, allUntouchedRates[0]); }
-		else { 
-			// always return the rates for observed types if not CID
-			System.arraycopy(omittedRates, 0, omittedRates, 0, nObsTypes);
+//		if (isCID) {
+//			// take just first RealParameter inside allUntouchedRates
+//			Arrays.fill(omittedRates, 0, nObsTypes, allUntouchedRates[0]);
+//			Arrays.fill(omittedRates, nObsTypes, omittedRates.length, allUntouchedRates[nObsTypes]);
+//		}
+		
+		 
+		// now grabbing only the hidden types the current model has
+		int j=0;
+		for (int i=0; i<ratesToOmit.length; i++) {
+			if (!ratesToOmit[i]) {				
+				if (i < nObsTypes && isCID) {
+					omittedRates[j] = allUntouchedRates[0];
+				}
+				else if (i >= nObsTypes && isCID) {
+					omittedRates[j] = allUntouchedRates[nObsTypes];
+				}
+				else {
+					omittedRates[j] = allUntouchedRates[i];
+				}
+				
+				j++;
+			}
 		}
-        
-        // now grabbing only the hidden types the current model has
-        int j=0;
-        for (int i=0; i<ratesToOmit.length; i++) {
-        	if (!ratesToOmit[i]) {
-        		if (isCID) {
-        			// take just first RealParameter of hidden type inside allUntouchedRates
-        			omittedRates[nObsTypes+j] = allUntouchedRates[nObsTypes+i];
-            	}
-        		else {
-        			omittedRates[nObsTypes+j] = allUntouchedRates[nObsTypes+i];
-        		}
-        		
-        		j++;
-        	}
-        }
-        
+		
         return omittedRates;
 	}
+
 	
 	private double[][] omitMatrixRates(double[][] allUntouchedMatrixRates, boolean[][] matrixRatesToOmit, boolean[] isMigRateSymmetric) {
 		
@@ -241,18 +240,22 @@ public class HiddenParameterization extends CanonicalParameterization {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
 
 	@Override
 	public double[] getRemovalProbChangeTimes() {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
 
 	@Override
 	public double[] getRhoSamplingTimes() {
+
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
 
 	
 	@Override
@@ -288,8 +291,12 @@ public class HiddenParameterization extends CanonicalParameterization {
 
 	@Override
 	protected double[] getDeathRateValues(double time) {
-		// TODO Auto-generated method stub
-		return null;
+		if (!modelChecked) {
+			checkModel(); // updates ommited rates
+		}
+		
+		// omitRates populates omittedRates and returns it
+		return omitRates(deathRateInput.get().getValuesAtTime(time), ratesToOmit, isCID);
 	}
 
 	@Override

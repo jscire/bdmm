@@ -20,6 +20,7 @@ public class Triplet extends BEASTObject {
 	
 	@Override
 	public void initAndValidate() {
+		cladogeneticEvent = new int[3];
 		cladogeneticEvent[0] = parentStateInput.get();
 		cladogeneticEvent[1] = leftChildInput.get();
 		cladogeneticEvent[2] = rightChildInput.get();

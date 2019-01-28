@@ -72,7 +72,7 @@ public class HiddenParameterization extends CanonicalParameterization {
 			cidFlag = cidFlagInput.get().getValue();
 			isCID = (cidFlag == 1) ? true:false;
 			changeModel();
-		};
+		}
 		
 		modelChecked = true;
 		return;
@@ -212,6 +212,7 @@ public class HiddenParameterization extends CanonicalParameterization {
 		if (!modelChecked) {
 			checkModel(); // updates ommited rates
 		}
+//		omittedRates = omitRates(birthRateInput.get().getValuesAtTime(time), ratesToOmit);
 		
 		// omitRates populates omittedRates and returns it
 		return omitRates(birthRateInput.get().getValuesAtTime(time), ratesToOmit, isCID);

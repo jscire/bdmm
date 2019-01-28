@@ -13,8 +13,8 @@ import beast.core.parameter.RealParameter;
  */
 public class Skyline3DMatrixParameter extends SkylineParameter {
 
-	final public Input<List<Triplet>> tripletsInput = new Input<>("tripletList", "List of Triplet objects that contain states of a parent and its children, and the triplet type", new ArrayList<>());
-	final public Input<String[]> tripletOrderInput = new Input<>("tripletTypeList", "List of triplet type strings, one per real parameter (rate) in a single interval (order will be repeated in all intervals).");	
+    public Input<List<Triplet>> tripletsInput = new Input<>("tripletList", "List of Triplet objects that contain states of a parent and its children, and the triplet type", new ArrayList<>());
+	public Input<String[]> tripletOrderInput = new Input<>("tripletTypeList", "List of triplet type strings, one per real parameter (rate) in a single interval (order will be repeated in all intervals).");
     
 	int nTypes;
 
@@ -40,6 +40,19 @@ public class Skyline3DMatrixParameter extends SkylineParameter {
         super(changeTimesParam, rateValuesParam, nTypes);
     }
 
+    public Skyline3DMatrixParameter(RealParameter changeTimesParam,
+                                    RealParameter rateValuesParam,
+                                    int nTypes,
+                                    List<Triplet> speciationTriplets,
+                                    String[] tripletsType) {
+        changeTimesInput.setValue(changeTimesParam, this);
+        rateValuesInput.setValue(rateValuesParam, this);
+        nTypesInput.setValue(nTypes, this);
+        tripletsInput.setValue(speciationTriplets, this);
+        tripletOrderInput.setValue(tripletsType, this);
+        initAndValidate();
+    }
+
     @Override
     public void initAndValidate() {
         super.initAndValidate();
@@ -58,9 +71,22 @@ public class Skyline3DMatrixParameter extends SkylineParameter {
         if (nTypesInput.get() != null) {
             nTypes = nTypesInput.get();
 
-            if (!inputIsScalar && elementsPerMatrix != nTypes*(nTypes-1)) {
-                throw new IllegalArgumentException("SkylineMatrix parameter has " +
-                        "an incorrect number of elements.");
+
+            if(tripletsInput.get() != null) {
+                /*
+                 * Validating triplets
+                 */
+                triplets = tripletsInput.get(); //TODO make sure all triplets have a valid triplet name (stored in tripletOrder below)
+
+                tripletOrder = tripletOrderInput.get();
+                if (tripletOrder.length < elementsPerMatrix)
+                    throw new IllegalArgumentException("Misspecification: the unique number of tags in tripletOrder is smaller than the number of elements in the rate input.");
+            } else {
+
+                if (!inputIsScalar && elementsPerMatrix != nTypes * (nTypes - 1) * (nTypes / 2 + 1)) {
+                    throw new IllegalArgumentException("Skyline3DMatrix parameter has " +
+                            "an incorrect number of elements.");
+                }
             }
         } else {
             throw new IllegalArgumentException("Number of types must be input when using Skyline3DMatrixParameter"); //TODO implement a way to infer the number of types
@@ -71,42 +97,37 @@ public class Skyline3DMatrixParameter extends SkylineParameter {
 
         valuesAtTime = new double[nTypes][nTypes][nTypes];
         		
-        /*
-         * Validating triplets below
-         */
-        triplets = tripletsInput.get(); // need to write a test that makes sure all triplets have a valid triplet name (stored in tripletOrder below)
-        
-        tripletOrder = tripletOrderInput.get();
-        if (tripletOrder.length != (nIntervals * totalElementCount)) {
-        	throw new IllegalArgumentException("The number of triplets in tripletsInput does not match the number of specified rates.");
-        }
-        
-        populateValues();
+
     }
 
     @Override
-    //TODO check that the value assignment done here, from the RealParameter to the 3 dimensional array, is correct
     protected void updateValues() {
-        int idx=0;
-        for (int interval=0; interval<nIntervals; interval++) {
-            for (int i=0; i<nTypes; i++) {
-                for (int j=0; j<nTypes; j++) {
-                    for (int k = 0; k < nTypes; k++) {
-                        if (i==j && j==k) {
-                            values[interval][i][j][k] = 0.0;
-                            continue;
+        if(tripletsInput.get() != null) {
+            populateValues();
+        } else {
+            //TODO check that the value assignment done here, from the RealParameter to the 3 dimensional array, is correct
+            int idx=0;
+            for (int interval=0; interval<nIntervals; interval++) {
+                for (int i=0; i<nTypes; i++) {
+                    for (int j=0; j<nTypes; j++) {
+                        for (int k = 0; k <= j ; k++) {
+                            if (i==j && j==k) {
+                                values[interval][i][j][k] = 0.0;
+                                continue;
+                            }
+
+                            if (inputIsScalar)
+                                values[interval][i][j][k] = rateValuesInput.get().getValue(interval);
+                            else
+                                values[interval][i][j][k] = rateValuesInput.get().getValue(idx);
+
+                            idx += 1;
                         }
-
-                        if (inputIsScalar)
-                            values[interval][i][j][k] = rateValuesInput.get().getValue(interval);
-                        else
-                            values[interval][i][j][k] = rateValuesInput.get().getValue(idx);
-
-                        idx += 1;
                     }
                 }
             }
         }
+
     }
 
     /**
@@ -134,6 +155,9 @@ public class Skyline3DMatrixParameter extends SkylineParameter {
         return nTypes;
     }
 
+    /**
+     * Populate the values array with values in the rateValuesInput, following the mapping given in the triplets inputs.
+     */
     public void populateValues () {
     	// build hashmap with "triplet type":index
     	for (int i=0; i<tripletOrder.length; i++) {
@@ -146,8 +170,8 @@ public class Skyline3DMatrixParameter extends SkylineParameter {
     	for (Triplet triplet: triplets) {
     		int[] types = triplet.getTriplet();
     		i = types[0];
-    		j = types[1];
-    		k = types[2];
+    		j = Math.max(types[1], types[2]); // j is always greater or equal to k, b_ijk is set to 0 if k>j.
+    		k = Math.min(types[1], types[2]);
     		tripletType = triplet.getTripletType();
     		tripletTypeIdx = tripletTypeRealParameterMap.get(tripletType);
     		
@@ -177,5 +201,9 @@ public class Skyline3DMatrixParameter extends SkylineParameter {
         tmp = values;
         values = storedValues;
         storedValues = tmp;
+    }
+
+    public static void main(String[] args) {
+
     }
 }

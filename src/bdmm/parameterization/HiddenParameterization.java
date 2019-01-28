@@ -205,57 +205,6 @@ public class HiddenParameterization extends CanonicalParameterization {
 		return omittedMatrixRates;
 	}
 	
-	@Override
-	public double[] getBirthRateChangeTimes() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public double[] getMigRateChangeTimes() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public double[] getCrossBirthRateChangeTimes() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public double[] getCladogeneticBirthRateChangeTimes() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public double[] getDeathRateChangeTimes() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public double[] getSamplingRateChangeTimes() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-
-	@Override
-	public double[] getRemovalProbChangeTimes() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-
-	@Override
-	public double[] getRhoSamplingTimes() {
-
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
 
 	
 	@Override
@@ -273,21 +222,11 @@ public class HiddenParameterization extends CanonicalParameterization {
 		if (!modelChecked) {
 			checkModel(); // updates ommited rates
 		}
+		
 		return omitMatrixRates(migRateInput.get().getValuesAtTime(time), matrixRatesToOmit, isMigRateSymmetric);
-
 	}
 
-	@Override
-	protected double[][] getCrossBirthRateValues(double time) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	protected double[][][] getCladogeneticBirthRateValues(double time) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 
 	@Override
 	protected double[] getDeathRateValues(double time) {
@@ -299,28 +238,5 @@ public class HiddenParameterization extends CanonicalParameterization {
 		return omitRates(deathRateInput.get().getValuesAtTime(time), ratesToOmit, isCID);
 	}
 
-	@Override
-	protected double[] getSamplingRateValues(double time) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	protected double[] getRemovalProbValues(double time) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	protected double[] getRhoValues(double time) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	protected void validateParameterTypeCounts() {
-		// TODO Auto-generated method stub
-
-	}
 
 }

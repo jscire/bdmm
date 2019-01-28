@@ -27,7 +27,7 @@ public class CanonicalParameterization extends Parameterization {
             "Birth rate among demes skyline.");
 
     public Input<Skyline3DMatrixParameter> cladogeneticBirthRateInput = new Input<>("cladogeneticBirthRate",
-            "Cladogenic birth rate skyline.");
+            "Cladogenetic birth rate skyline.");
 
     @Override
     public double[] getMigRateChangeTimes() {

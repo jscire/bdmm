@@ -1474,7 +1474,7 @@ public class BirthDeathMigrationLikelihoodTest {
 
 		Parameterization parameterization = new CanonicalParameterization();
 		parameterization.initByName(
-				"nTypes", numStates,
+				"typeSet", new TypeSet(numStates),
 				"origin", new RealParameter("3.0"),
 				"birthRate", new SkylineVectorParameter(
 						null,
@@ -1574,7 +1574,7 @@ public class BirthDeathMigrationLikelihoodTest {
 
 		Parameterization parameterization = new CanonicalParameterization();
 		parameterization.initByName(
-				"nTypes", numStates,
+				"typeSet", new TypeSet(numStates),
 				"origin", new RealParameter("20.456260172900002"),
 				"birthRate", new SkylineVectorParameter(
 						null,

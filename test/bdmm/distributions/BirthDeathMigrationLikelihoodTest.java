@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -1433,5 +1434,190 @@ public class BirthDeathMigrationLikelihoodTest {
 		density.initAndValidate();
 
 		assertEquals(-25.991511346557598, density.calculateLogP(), 1e-4);
+	}
+
+	@Test
+	public void testLikelihoodBasicComparisonWithClaSSE() {
+
+		int numStates = 4;
+
+		String newick = "(((Human[&state=1]:1.0,Chimp[&state=1]:1.0):1.0,Gorilla[&state=1]:2.0):1.0,Orang[&state=2]:3.0);";
+
+		Triplet jTriplet1 = new Triplet();
+		jTriplet1.initByName("parentState", 1,
+				"leftChildState", 1,
+				"rightChildState",2,
+				"tripletType", "JUMPDISPERSAL");
+		Triplet jTriplet2 = new Triplet();
+		jTriplet2.initByName("parentState", 2,
+				"leftChildState", 1,
+				"rightChildState",2,
+				"tripletType", "JUMPDISPERSAL");
+		Triplet vTriplet1 = new Triplet();
+		vTriplet1.initByName("parentState", 3,
+				"leftChildState", 1,
+				"rightChildState",2,
+				"tripletType", "VICARIANCE");
+		Triplet ssTriplet1 = new Triplet();
+		ssTriplet1.initByName("parentState", 3,
+				"leftChildState", 1,
+				"rightChildState",3,
+				"tripletType", "SUBSYMPATRY");
+		Triplet ssTriplet2 = new Triplet();
+		ssTriplet2.initByName("parentState", 3,
+				"leftChildState", 2,
+				"rightChildState",3,
+				"tripletType", "SUBSYMPATRY");
+
+		List<Triplet> tripletList = Arrays.asList(jTriplet1,jTriplet2,vTriplet1,ssTriplet1, ssTriplet2);
+		String[] tripletTypeList = new String[]{"JUMPDISPERSAL", "VICARIANCE", "SUBSYMPATRY"};
+
+		Parameterization parameterization = new CanonicalParameterization();
+		parameterization.initByName(
+				"nTypes", numStates,
+				"origin", new RealParameter("3.0"),
+				"birthRate", new SkylineVectorParameter(
+						null,
+						new RealParameter("0.32222224 0.32222224 0.32222224 0.0"), numStates),
+				"deathRate", new SkylineVectorParameter(
+						null,
+						new RealParameter("0.1"), numStates),
+				"birthRateAmongDemes", new SkylineMatrixParameter(
+						null,
+						new RealParameter("0.0"), numStates),
+				"migrationRate", new SkylineMatrixParameter(
+						null,
+						new RealParameter("0.0 0.0 0.0 0.01 0.0 0.01 0.01 0.0 0.01 0.0 0.01 0.01"), numStates),
+				"samplingRate", new SkylineVectorParameter(
+						null,
+						new RealParameter("0.0"), numStates),
+				"removalProb", new SkylineVectorParameter(
+						null,
+						new RealParameter("1.0"), numStates),
+				"rhoSampling", new TimedParameter(
+						new RealParameter("3.0"),
+						new RealParameter("1.0"), numStates),
+				"cladogeneticBirthRate", new Skyline3DMatrixParameter(
+						null,
+						new RealParameter("0.0 0.05370370666666666 0.05370370666666666"), numStates, tripletList, tripletTypeList));
+//						new RealParameter("0.0 0.0 0.05370370666666666"), numStates, tripletList, tripletTypeList));
+
+
+		BirthDeathMigrationDistribution density = new BirthDeathMigrationDistribution();
+
+		density.initByName(
+				"parameterization", parameterization,
+				"frequencies", new RealParameter("0.25 0.25 0.25 0.25"),
+				"conditionOnSurvival", false,
+				"tree", new TreeParser(newick,
+						false, false,
+						true,0),
+				"typeLabel", "state",
+				"parallelize", false);
+
+		double logL = density.calculateLogP();
+
+		System.out.println("Birth-death result: " + logL + "\t- Test LikelihoodBasicComparisonWithClaSSE");
+
+		assertEquals(-10.593468826583916, logL, 1e-7); // Reference value from SSE package
+	}
+
+	@Test
+	public void testLikelihoodComparisonWithClaSSE() {
+
+		int numStates = 4;
+
+		String newick = "(((sp39[&state=0]:0.518912972,sp40[&state=0]:0.518912972):19.54206195,((((sp25[&state=1]:3.198513788,(sp32[&state=1]:2.293402763," +
+				"(sp41[&state=1]:0.1728996412,sp42[&state=1]:0.1728996412):2.120503122):0.9051110254):7.525323533,((sp20[&state=1]:9.577599427,(sp26[&state=1]:2.751623892," +
+				"(sp30[&state=1]:2.405609293,sp31[&state=1]:2.405609293):0.3460145989):6.825975535):0.05909341512,(sp17[&state=0]:7.221384607," +
+				"sp18[&state=3]:7.221384607):2.415308235):1.087144479):0.5715875464,sp10[&state=1]:11.29542487):6.453137462,((sp33[&state=1]:2.252609903," +
+				"sp34[&state=1]:2.252609903):4.989398146,sp16[&state=3]:7.24200805):10.50655428):2.312412597):0.3952852439,(((((sp23[&state=0]:5.605262355," +
+				"sp24[&state=0]:5.605262355):3.179619681,((sp37[&state=1]:1.329072526,sp38[&state=1]:1.329072526):1.780228265,(sp27[&state=1]:2.543803164," +
+				"sp28[&state=1]:2.543803164)38:0.5654976265):5.675581245):6.165501477,sp6[&state=3]:14.95038351):0.6290423683,((sp11[&state=2]:8.298747349," +
+				"(sp15[&state=0]:8.099808068,sp12[&state=0]:8.099808068):0.1989392817):3.788483262,(sp21[&state=2]:6.890801228,(sp35[&state=3]:1.989124199," +
+				"sp36[&state=1]:1.989124199):4.901677029):5.196429383):3.492195269):2.878773551,sp4[&state=0]:18.45819943):1.998060738);";
+
+		Triplet triplet1 = new Triplet();
+		triplet1.initByName("parentState", 3,
+				"leftChildState", 1,
+				"rightChildState",3,
+				"tripletType", "uniqueRate");
+		Triplet triplet2 = new Triplet();
+		triplet2.initByName("parentState", 3,
+				"leftChildState", 2,
+				"rightChildState",3,
+				"tripletType", "uniqueRate");
+		Triplet triplet3 = new Triplet();
+		triplet3.initByName("parentState", 3,
+				"leftChildState", 3,
+				"rightChildState",1,
+				"tripletType", "uniqueRate");
+		Triplet triplet4 = new Triplet();
+		triplet4.initByName("parentState", 3,
+				"leftChildState", 3,
+				"rightChildState",2,
+				"tripletType", "uniqueRate");
+		Triplet triplet5 = new Triplet();
+		triplet5.initByName("parentState", 3,
+				"leftChildState", 1,
+				"rightChildState",2,
+				"tripletType", "uniqueRate");
+		Triplet triplet6 = new Triplet();
+		triplet6.initByName("parentState", 3,
+				"leftChildState", 2,
+				"rightChildState",1,
+				"tripletType", "uniqueRate");
+
+
+		List<Triplet> tripletList = Arrays.asList(triplet1,triplet2, triplet3, triplet4, triplet5, triplet6);
+		String[] tripletTypeList = new String[]{"uniqueRate"};
+
+		Parameterization parameterization = new CanonicalParameterization();
+		parameterization.initByName(
+				"nTypes", numStates,
+				"origin", new RealParameter("20.456260172900002"),
+				"birthRate", new SkylineVectorParameter(
+						null,
+						new RealParameter("0.2 0.2 0.2 0.0"), numStates),
+				"deathRate", new SkylineVectorParameter(
+						null,
+						new RealParameter("0.1"), numStates),
+				"birthRateAmongDemes", new SkylineMatrixParameter(
+						null,
+						new RealParameter("0.0"), numStates),
+				"migrationRate", new SkylineMatrixParameter(
+						null,
+						new RealParameter("0.0 0.0 0.0 0.01 0.0 0.01 0.01 0.0 0.01 0.0 0.01 0.01"), numStates),
+				"samplingRate", new SkylineVectorParameter(
+						null,
+						new RealParameter("0.0"), numStates),
+				"removalProb", new SkylineVectorParameter(
+						null,
+						new RealParameter("1.0"), numStates),
+				"rhoSampling", new TimedParameter(
+						new RealParameter("20.456260172900002"),
+						new RealParameter("1.0"), numStates),
+				"cladogeneticBirthRate", new Skyline3DMatrixParameter(
+						null,
+						new RealParameter("0.033333333333333"), numStates, tripletList, tripletTypeList));
+
+
+		BirthDeathMigrationDistribution density = new BirthDeathMigrationDistribution();
+
+		density.initByName(
+				"parameterization", parameterization,
+				"frequencies", new RealParameter("0.25 0.25 0.25 0.25"),
+				"conditionOnSurvival", false,
+				"tree", new TreeParser(newick,
+						false, false,
+						true,0),
+				"typeLabel", "state",
+				"parallelize", false);
+
+		double logL = density.calculateLogP();
+
+		System.out.println("Birth-death result: " + logL + "\t- Test LikelihoodComparisonWithClaSSE");
+
+		assertEquals(-129.97617749574326, logL, 1e-4); // Reference value from SSE package
 	}
 }

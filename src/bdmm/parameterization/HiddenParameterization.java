@@ -192,39 +192,34 @@ public class HiddenParameterization extends CanonicalParameterization {
 	private double[][] omitMatrixRates(double[][] allUntouchedMatrixRates, boolean[][] matrixRatesToOmit, boolean[] isMigRateSymmetric) {
 		
 		/*
-		 *  First two for loops for looping over omittedMatrixRates
-		 *  (the 'return' matrix, i.e., matrix at time)
-		 *  
 		 *  Note that nTypes should have been updated to the right (current)
 		 *  value by the birth death part of changeModel()
 		 */
-		for (int i1=0; i1<nTypes; i1++) {
-			for (int j1=0; j1<nTypes; i1++) {
-				
+		int i = 0;
+		int j = 0;
+		/*
+		 * Going over 'values[][] = allUntouchedMatrixRates'
+		 * and matrixRatesToOmit (we use both to populate 'return' matrix)
+		 */
+		for (int i2=0; i2<matrixRatesToOmit.length; i2++) {
+			for (int j2=0; j2<matrixRatesToOmit.length; j2++) {
 				/*
-				 * Second two loops for going over 'values[][] = allUntouchedMatrixRates'
-				 * and matrixRatesToOmit (we use both to populate 'return' matrix)
+				 * First symmetrify (or not) allUntouchedMatrixRates (our source matrix)
+	
+				 * Note that we are putting the top-right value on the bottom-left value,
+				 * so we are ignoring the "later" RealParameter entry that would go into
+				 * the bottom-left value of values[][] (i.e., allUntouchedMatrixRates)
 				 */
-				for (int i2=0; i2<matrixRatesToOmit.length; i2++) {
-					for (int j2=0; j2<matrixRatesToOmit.length; j2++) {
-						
-						/*
-						 * First symmetrify (or not) allUntouchedMatrixRates (our source matrix)
-						 * 
-						 * Note that we are putting the top-right value on the bottom-left value,
-						 * so we are ignoring the "later" RealParameter entry that would go into
-						 * the bottom-left value of values[][] (i.e., allUntouchedMatrixRates)
-						 */
-						if (i2 >= nObsTypes && j2 < nObsTypes && isMigRateSymmetric[j2]) {
-							allUntouchedMatrixRates[i2+nObsTypes][j2] =
-									allUntouchedMatrixRates[j2+nObsTypes][i2];
-						}
-						
-						// now fill in!
-						if (!matrixRatesToOmit[i2][j2]) {
-							omittedMatrixRates[i1][j2] = allUntouchedMatrixRates[i2][j2];
-						}
-					}
+				if (i2 >= nObsTypes && j2 < nObsTypes && isMigRateSymmetric[j2]) {
+					allUntouchedMatrixRates[i2+nObsTypes][j2] =
+							allUntouchedMatrixRates[j2+nObsTypes][i2];
+				}
+				
+				// now fill in!
+				if (!matrixRatesToOmit[i2][j2]) {
+					if (j >= nTypes) { j = 0; i++; }
+					omittedMatrixRates[i][j] = allUntouchedMatrixRates[i2][j2];
+					j++;
 				}
 			}
 		}
@@ -272,5 +267,34 @@ public class HiddenParameterization extends CanonicalParameterization {
 		return omitRates(deathRateInput.get().getValuesAtTime(time), ratesToOmit, isCID);
 	}
 
+	@Override
+    protected void validateParameterTypeCounts() {
+        if ( (birthRateInput.get().getNTypes() != hiddenTraitFlagInput.get().getDimension()*2) || 
+        		(birthRateInput.get().getNTypes() != nTypesInput.get()) )
+            throw new IllegalArgumentException("Birth rate skyline type count does not match type count of model or hidden type flag.");
 
+        if ( (deathRateInput.get().getNTypes() != hiddenTraitFlagInput.get().getDimension()*2) || 
+        		(deathRateInput.get().getNTypes() != nTypesInput.get()) )
+            throw new IllegalArgumentException("Death rate skyline type count does not match type count of model or hidden type flag.");
+
+        if ( (samplingRateInput.get().getNTypes() != hiddenTraitFlagInput.get().getDimension()*2) || 
+        		(samplingRateInput.get().getNTypes() != nTypesInput.get()) )
+            throw new IllegalArgumentException("Sampling rate skyline type count does not match type count of model or hidden type flag.");
+
+        if ( (migRateInput.get() != null && migRateInput.get().getNTypes() != hiddenTraitFlagInput.get().getDimension()*2) ||
+        		(migRateInput.get().getNTypes() != nTypesInput.get()) )
+            throw new IllegalArgumentException("Migration rate skyline type count does not match type count of model.");
+
+        if ( (crossBirthRateInput.get().getNTypes() != hiddenTraitFlagInput.get().getDimension()*2) || 
+        		(crossBirthRateInput.get().getNTypes() != nTypesInput.get()) )
+            throw new IllegalArgumentException("Birth rate among demes skyline type count does not match type count of model or hidden type flag.");
+
+        if ( (removalProbInput.get().getNTypes() != hiddenTraitFlagInput.get().getDimension()*2) || 
+        		(removalProbInput.get().getNTypes() != nTypesInput.get()) )
+            throw new IllegalArgumentException("Removal prob skyline type count does not match type count of model or hidden type flag.");
+
+        if ( (rhoSamplingInput.get() != null && rhoSamplingInput.get().getNTypes() != hiddenTraitFlagInput.get().getDimension()*2) ||
+        		(migRateInput.get().getNTypes() != nTypesInput.get()) )
+            throw new IllegalArgumentException("Rho sampling type count does not match type count of model.");
+    }
 }

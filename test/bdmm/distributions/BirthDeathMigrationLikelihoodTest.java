@@ -40,7 +40,7 @@ public class BirthDeathMigrationLikelihoodTest {
 
 		Parameterization parameterization = new CanonicalParameterization();
 		parameterization.initByName(
-		        "nTypes", 2,
+		        "typeSet", new TypeSet(2),
                 "origin", originParam,
                 "birthRate", new SkylineVectorParameter(
                         null,
@@ -98,7 +98,7 @@ public class BirthDeathMigrationLikelihoodTest {
 
 		Parameterization parameterization = new EpiParameterization();
 		parameterization.initByName(
-		        "nTypes", 2,
+                "typeSet", new TypeSet(2),
                 "origin", originParam,
                 "R0", new SkylineVectorParameter(
                         null,
@@ -152,7 +152,7 @@ public class BirthDeathMigrationLikelihoodTest {
 
 		Parameterization parameterization = new EpiParameterization();
 		parameterization.initByName(
-		        "nTypes", 1,
+                "typeSet", new TypeSet(1),
                 "origin", new RealParameter("6.0"),
                 "R0", new SkylineVectorParameter(
                         null,
@@ -195,7 +195,7 @@ public class BirthDeathMigrationLikelihoodTest {
 
         Parameterization parameterization = new EpiParameterization();
 		parameterization.initByName(
-		        "nTypes", 2,
+                "typeSet", new TypeSet(2),
                 "origin", new RealParameter("6.0"),
                 "R0", new SkylineVectorParameter(
                         new RealParameter("1.0"),
@@ -250,7 +250,7 @@ public class BirthDeathMigrationLikelihoodTest {
 
         Parameterization parameterization = new EpiParameterization();
 		parameterization.initByName(
-		        "nTypes", 1,
+		        "typeSet", new TypeSet(1),
                 "tree", tree,
                 "R0", new SkylineVectorParameter(
                         null,
@@ -321,7 +321,7 @@ public class BirthDeathMigrationLikelihoodTest {
 
         Parameterization parameterization = new EpiParameterization();
 		parameterization.initByName(
-		        "nTypes", 1,
+                "typeSet", new TypeSet(1),
                 "origin", originParam,
                 "R0", new SkylineVectorParameter(
                         null,
@@ -388,7 +388,7 @@ public class BirthDeathMigrationLikelihoodTest {
 
         Parameterization parameterization = new EpiParameterization();
 		parameterization.initByName(
-		        "nTypes", 1,
+                "typeSet", new TypeSet(1),
                 "origin", originParam,
                 "R0", new SkylineVectorParameter(
                         null,
@@ -448,7 +448,7 @@ public class BirthDeathMigrationLikelihoodTest {
         RealParameter originParam = new RealParameter("2.0");
         Parameterization parameterization = new CanonicalParameterization();
         parameterization.initByName(
-                "nTypes", 1,
+                "typeSet", new TypeSet(1),
                 "origin", originParam,
                 "birthRate", new SkylineVectorParameter(
                         null,
@@ -495,7 +495,7 @@ public class BirthDeathMigrationLikelihoodTest {
         RealParameter originParam = new RealParameter("2.0");
         Parameterization parameterization = new EpiParameterization();
         parameterization.initByName(
-                "nTypes", 1,
+                "typeSet", new TypeSet(1),
                 "origin", originParam,
                 "R0", new SkylineVectorParameter(
                         new RealParameter("1.0 1.5"),
@@ -539,7 +539,7 @@ public class BirthDeathMigrationLikelihoodTest {
         RealParameter originParam = new RealParameter("2.0");
         Parameterization parameterization = new EpiParameterization();
         parameterization.initByName(
-                "nTypes", 1,
+                "typeSet", new TypeSet(1),
                 "origin", originParam,
                 "R0", new SkylineVectorParameter(
                         new RealParameter("1.0 1.5"),
@@ -583,7 +583,7 @@ public class BirthDeathMigrationLikelihoodTest {
         Parameterization parameterization = new EpiParameterization();
         parameterization.initByName(
                 "tree", tree,
-                "nTypes", 1,
+                "typeSet", new TypeSet(1),
                 "R0", new SkylineVectorParameter(
                         new RealParameter("0.5 1.0 1.1"),
                         new RealParameter(new Double[]{3.0/4.5, 2.0/1.5, 4.0/1.5, 4.0/2.5})),
@@ -631,7 +631,7 @@ public class BirthDeathMigrationLikelihoodTest {
         Parameterization parameterization = new EpiParameterization();
         parameterization.initByName(
                 "origin", new RealParameter("6.0"),
-                "nTypes", 1,
+                "typeSet", new TypeSet(1),
                 "R0", new SkylineVectorParameter(
                         null,
                         new RealParameter("1.3333333334")),
@@ -674,7 +674,7 @@ public class BirthDeathMigrationLikelihoodTest {
         Parameterization parameterization = new EpiParameterization();
         parameterization.initByName(
                 "origin", new RealParameter("6.0"),
-                "nTypes", 1,
+                "typeSet", new TypeSet(1),
                 "R0", new SkylineVectorParameter(
                         new RealParameter("3.0"),
                         new RealParameter("0.6666666667 1.3333333334")),
@@ -713,7 +713,7 @@ public class BirthDeathMigrationLikelihoodTest {
         Parameterization parameterization = new EpiParameterization();
         parameterization.initByName(
                 "origin", new RealParameter("2.5"),
-                "nTypes", 2,
+                "typeSet", new TypeSet(2),
                 "R0", new SkylineVectorParameter(
                         null,
                         new RealParameter(Double.toString(4.0/3.0)), 2),
@@ -817,7 +817,7 @@ public class BirthDeathMigrationLikelihoodTest {
         Parameterization parameterization = new EpiParameterization();
         parameterization.initByName(
                 "origin", new RealParameter("6.0"),
-                "nTypes", 2,
+                "typeSet", new TypeSet(2),
                 "R0", new SkylineVectorParameter(
                         null,
                         new RealParameter((4.0 / 3.0) + " " + 5.0)),
@@ -862,7 +862,7 @@ public class BirthDeathMigrationLikelihoodTest {
         Parameterization parameterization = new EpiParameterization();
         parameterization.initByName(
                 "origin", new RealParameter(Double.toString(tree.getRoot().getHeight()+0.1)),
-                "nTypes", 2,
+                "typeSet", new TypeSet(2),
                 "R0", new SkylineVectorParameter(
                         null,
                         new RealParameter((4.0 / 3.0) + " " + 5.0)),
@@ -885,7 +885,7 @@ public class BirthDeathMigrationLikelihoodTest {
                 "frequencies", new RealParameter("0.5 0.5"),
                 "conditionOnSurvival", true,
                 "tree", tree,
-                "typeLabel", "state",
+                "typeLabel", "type",
                 "parallelize", true);
 
 		assertEquals(-661.9588648301033, density.calculateLogP(), 1e-5); // result from BEAST, not checked in R
@@ -909,7 +909,7 @@ public class BirthDeathMigrationLikelihoodTest {
         Parameterization parameterization = new CanonicalParameterization();
         parameterization.initByName(
                 "origin", new RealParameter(Double.toString(tree.getRoot().getHeight() + 0.02686563367)),
-                "nTypes", 2,
+                "typeSet", new TypeSet(2),
                 "birthRate", new SkylineVectorParameter(
                         null,
                         new RealParameter("2.0"), 2),
@@ -954,7 +954,7 @@ public class BirthDeathMigrationLikelihoodTest {
         Parameterization parameterization = new CanonicalParameterization();
         parameterization.initByName(
                 "origin", new RealParameter("6.0"),
-                "nTypes", 2,
+                "typeSet", new TypeSet(2),
                 "birthRate", new SkylineVectorParameter(
                         null,
                         new RealParameter("2.0 6.25"), 2),
@@ -998,7 +998,7 @@ public class BirthDeathMigrationLikelihoodTest {
         Parameterization parameterization = new EpiParameterization();
         parameterization.initByName(
                 "origin", new RealParameter("4.1"),
-                "nTypes", 2,
+                "typeSet", new TypeSet(2),
                 "R0", new SkylineVectorParameter(
                         new RealParameter("1.0"),
                         new RealParameter("6 5 2 2.5"), 2),
@@ -1045,7 +1045,7 @@ public class BirthDeathMigrationLikelihoodTest {
         Parameterization parameterization = new EpiParameterization();
         parameterization.initByName(
                 "origin", new RealParameter("6.0"),
-                "nTypes", 2,
+                "typeSet", new TypeSet(2),
                 "R0", new SkylineVectorParameter(
                         null,
                         new RealParameter("0 0"), 2),
@@ -1092,7 +1092,7 @@ public class BirthDeathMigrationLikelihoodTest {
         Parameterization parameterization = new EpiParameterization();
         parameterization.initByName(
                 "origin", new RealParameter("4.1"),
-                "nTypes", 3,
+                "typeSet", new TypeSet(3),
                 "R0", new SkylineVectorParameter(
                         null,
                         new RealParameter("6 2 5")),
@@ -1128,13 +1128,13 @@ public class BirthDeathMigrationLikelihoodTest {
 	@Test
 	public void testUnknownStatesWithoutMigrationOrRateChange() {
 
-        Tree tree = new TreeParser("((3[&type=-1]:1.5,4[&type=-1]:0.5):1,(1[&type=-1]:1,2[&type=-1]:1):3);",
+        Tree tree = new TreeParser("((3[&type=\"?\"]:1.5,4[&type=\"?\"]:0.5):1,(1[&type=\"?\"]:1,2[&type=\"?\"]:1):3);",
                 false);
 
         Parameterization parameterization = new EpiParameterization();
         parameterization.initByName(
                 "origin", new RealParameter("4.1"),
-                "nTypes", 2,
+                "typeSet", new TypeSet(2),
                 "R0", new SkylineVectorParameter(
                         null,
                         new RealParameter("6 2")),
@@ -1171,13 +1171,13 @@ public class BirthDeathMigrationLikelihoodTest {
 	@Test
 	public void testUnknownStatesWithMigration() {
 
-        Tree tree = new TreeParser("((3[&type=-1]:1.5,4[&type=-1]:0.5):1,(1[&type=-1]:1,2[&type=-1]:1):3);",
+        Tree tree = new TreeParser("((3[&type=\"?\"]:1.5,4[&type=\"?\"]:0.5):1,(1[&type=\"?\"]:1,2[&type=\"?\"]:1):3);",
                 false);
 
         Parameterization parameterization = new EpiParameterization();
         parameterization.initByName(
                 "origin", new RealParameter("4.1"),
-                "nTypes", 2,
+                "typeSet", new TypeSet(2),
                 "R0", new SkylineVectorParameter(
                         null,
                         new RealParameter("6 2")),
@@ -1216,13 +1216,13 @@ public class BirthDeathMigrationLikelihoodTest {
 	@Test
 	public void testUnknownStatesWithMigrationAndRateChange() {
 
-        Tree tree = new TreeParser("((3[&type=-1]:1.5,4[&type=-1]:0.5):1,(1[&type=-1]:1,2[&type=-1]:1):3);",
+        Tree tree = new TreeParser("((3[&type=\"?\"]:1.5,4[&type=\"?\"]:0.5):1,(1[&type=\"?\"]:1,2[&type=\"?\"]:1):3);",
                 false);
 
         Parameterization parameterization = new EpiParameterization();
         parameterization.initByName(
                 "origin", new RealParameter("4.1"),
-                "nTypes", 2,
+                "typeSet", new TypeSet(2),
                 "R0", new SkylineVectorParameter(
                         new RealParameter("1.5"),
                         new RealParameter("6 5 2 1.5")),
@@ -1266,7 +1266,7 @@ public class BirthDeathMigrationLikelihoodTest {
         Parameterization parameterization = new EpiParameterization();
         parameterization.initByName(
                 "tree", tree,
-                "nTypes", 2,
+                "typeSet", new TypeSet(2),
                 "R0", new SkylineVectorParameter(
                         null,
                         new RealParameter("1.5 1.4")),
@@ -1313,7 +1313,7 @@ public class BirthDeathMigrationLikelihoodTest {
         Parameterization parameterization = new EpiParameterization();
         parameterization.initByName(
                 "origin", new RealParameter("6.0"),
-                "nTypes", 1,
+                "typeSet", new TypeSet(1),
                 "R0", new SkylineVectorParameter(
                         null,
                         new RealParameter("1.5")),
@@ -1355,7 +1355,7 @@ public class BirthDeathMigrationLikelihoodTest {
         Parameterization parameterization = new EpiParameterization();
         parameterization.initByName(
                 "origin", origin,
-                "nTypes", 1,
+                "typeSet", new TypeSet(1),
                 "R0", new SkylineVectorParameter(
                         null,
                         new RealParameter("1.5")),
@@ -1400,7 +1400,7 @@ public class BirthDeathMigrationLikelihoodTest {
         Parameterization parameterization = new EpiParameterization();
         parameterization.initByName(
                 "tree", tree,
-                "nTypes", 1,
+                "typeSet", new TypeSet(1),
                 "R0", new SkylineVectorParameter(
                         null,
                         new RealParameter("1.5")),

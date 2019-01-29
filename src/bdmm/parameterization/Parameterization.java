@@ -10,8 +10,8 @@ import java.util.*;
 
 public abstract class Parameterization extends CalculationNode {
 
-    public Input<Integer> nTypesInput = new Input<>("nTypes",
-            "Number of types in model.",
+    public Input<TypeSet> typeSetInput = new Input<>("typeSet",
+            "Type set containing types in model.",
             Input.Validate.REQUIRED);
 
     public Input<RealParameter> originInput = new Input<>("origin",
@@ -41,11 +41,14 @@ public abstract class Parameterization extends CalculationNode {
     double[][] ZERO_VALUE_MATRIX;
     double[][][] ZERO_VALUE_3DMATRIX;
 
+    TypeSet typeSet;
+
     int nTypes;
 
     @Override
     public void initAndValidate() {
-        nTypes = nTypesInput.get();
+        typeSet = typeSetInput.get();
+        nTypes = typeSet.getNTypes();
         ZERO_VALUE_ARRAY = new double[nTypes];
         ZERO_VALUE_MATRIX = new double[nTypes][nTypes];
         ZERO_VALUE_3DMATRIX = new double[nTypes][nTypes][nTypes];
@@ -75,6 +78,10 @@ public abstract class Parameterization extends CalculationNode {
 
     public int getNTypes() {
         return nTypes;
+    }
+
+    public TypeSet getTypeSet() {
+        return typeSet;
     }
 
     public double getTotalProcessLength() {

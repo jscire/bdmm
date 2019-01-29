@@ -18,7 +18,7 @@ public class ParameterizationTest {
 
 		Parameterization parameterization = new CanonicalParameterization();
 		parameterization.initByName(
-		        "nTypes", 2,
+		        "typeSet", new TypeSet(2),
                 "origin", originParam,
                 "birthRate", new SkylineVectorParameter(
                         null,
@@ -42,7 +42,7 @@ public class ParameterizationTest {
                         originParam,
                         new RealParameter("0.0 0.0")));
 
-		System.out.println("Number of intervals: " + parameterization.getTotalIntervalCount());
+		Assert.assertEquals(2, parameterization.getTotalIntervalCount());
 
         Assert.assertEquals(2, parameterization.getBirthRates().length);
         Assert.assertEquals(2, parameterization.getDeathRates().length);
@@ -234,7 +234,7 @@ public class ParameterizationTest {
 
         Parameterization parameterization = new CanonicalParameterization();
 		parameterization.initByName(
-		        "nTypes", 2,
+		        "typeSet", new TypeSet(2),
                 "origin", originParam,
                 "birthRate", new SkylineVectorParameter(
                         null,

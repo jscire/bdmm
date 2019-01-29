@@ -11,9 +11,9 @@ import beast.core.parameter.IntegerParameter;
 
 public class HiddenParameterization extends CanonicalParameterization {
 	
-	final public Input<IntegerParameter> hiddenTraitFlagInput = new Input<>("hiddenTraitFlag", "Integers flag that determine if hidden trait exists, how many types it has, and the association of its types and the observed types: 0=No hidden type for the observed state, 1/2=Observed state has hidden type associated to it.");
+	final public Input<IntegerParameter> hiddenTraitFlagInput = new Input<>("hiddenTraitFlag", "Integers flag that determine if hidden trait exists, how many types it has, and the association of its types and the observed types: 0=No hidden type for the observed state, 1/2=Observed state has hidden type associated to it.", Input.Validate.REQUIRED);
 	
-	final public Input<IntegerParameter> cidFlagInput = new Input<>("cidFlag", "Integer flag for type-independence (i.e., CID-type models): 0=Type-dependent, 1=Type-independent.");
+	final public Input<IntegerParameter> cidFlagInput = new Input<>("cidFlag", "Integer flag for type-independence (i.e., CID-type models): 0=Type-dependent, 1=Type-independent.", Input.Validate.REQUIRED);
 	
 	private int nObsTypes;
 	private Integer[] hiddenTraitFlag;
@@ -35,7 +35,14 @@ public class HiddenParameterization extends CanonicalParameterization {
 	@Override
     public void initAndValidate() {
 		nTypes = nTypesInput.get();
+		if(nTypes % 2 != 0)
+			throw new IllegalArgumentException("nTypes input must be an even number. nTypes should be twice the number of observed types, regardless of how which of the possible hidden types are allowed.");
+
 		nObsTypes = nTypes/2; // initialize with all hidden types
+
+		if(hiddenTraitFlagInput.get().getValues().length!= nObsTypes)
+			throw new IllegalArgumentException("The length of hiddenTraitFlag must match the number of observed types.");
+
 		isMigRateSymmetric = new boolean[nObsTypes];
 		omittedRates = new double[nTypes];
 		omittedMatrixRates = new double[nTypes][nTypes];
@@ -61,6 +68,10 @@ public class HiddenParameterization extends CanonicalParameterization {
 	
 	public int getNObsTypes() {
 		return nObsTypes;
+	}
+
+	public int getNHiddenTypes(){
+		return getNTypes()-getNObsTypes();
 	}
 	
 	private void checkModel() {
@@ -161,7 +172,6 @@ public class HiddenParameterization extends CanonicalParameterization {
         return omittedRates;
 	}
 
-	
 	private double[][] omitMatrixRates(double[][] allUntouchedMatrixRates, boolean[][] matrixRatesToOmit, boolean[] isMigRateSymmetric) {
 		
 		/*
@@ -205,7 +215,13 @@ public class HiddenParameterization extends CanonicalParameterization {
 		return omittedMatrixRates;
 	}
 	
+	public boolean typeHasHiddenType(int typeNr){
+		if(typeNr < 0 || typeNr > nObsTypes)
+			throw new IllegalArgumentException("Invalid type number. Type number must match an observed type.");
 
+		boolean hasHiddenType = hiddenTraitFlagInput.get().getValue(typeNr) > 0;
+		return hasHiddenType;
+	}
 	
 	@Override
 	protected double[] getBirthRateValues(double time) {

@@ -48,7 +48,7 @@ public class Skyline3DMatrixParameter extends SkylineParameter {
                                     String[] tripletsType) {
         changeTimesInput.setValue(changeTimesParam, this);
         rateValuesInput.setValue(rateValuesParam, this);
-        nTypesInput.setValue(nTypes, this);
+        typeSetInput.setValue(new TypeSet(nTypes), this);
         tripletsInput.setValue(speciationTriplets, this);
         tripletOrderInput.setValue(tripletsType, this);
         initAndValidate();
@@ -69,8 +69,8 @@ public class Skyline3DMatrixParameter extends SkylineParameter {
         int elementsPerMatrix = totalElementCount/nIntervals;
         inputIsScalar = elementsPerMatrix == 1;
 
-        if (nTypesInput.get() != null) {
-            nTypes = nTypesInput.get();
+        if (typeSetInput.get() != null) {
+            nTypes = typeSetInput.get().getNTypes();
 
 
             if(tripletsInput.get() != null) {

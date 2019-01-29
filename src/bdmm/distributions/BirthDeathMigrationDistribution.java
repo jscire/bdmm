@@ -57,11 +57,13 @@ public class BirthDeathMigrationDistribution extends SpeciesTreeDistribution {
 
     public Input<Double> relativeToleranceInput = new Input<>("relTolerance",
             "relative tolerance for numerical integration",
-            1e-7);
+//            1e-7);
+            1e-6);
 
     public Input<Double> absoluteToleranceInput = new Input<>("absTolerance",
             "absolute tolerance for numerical integration",
-            1e-100 /*Double.MIN_VALUE*/);
+            1e-6 /*Double.MIN_VALUE*/);
+//            1e-100 /*Double.MIN_VALUE*/);
 
     public Input<Boolean> parallelizeInput = new Input<>(
             "parallelize",
@@ -500,7 +502,7 @@ public class BirthDeathMigrationDistribution extends SpeciesTreeDistribution {
                             if(parentType == childType && parentType == otherChildType)
                                 continue;
 
-                            if(childType > otherChildType) // by definition, b_ijk is 0 if k > j
+                            if(childType < otherChildType) // by definition, b_ijk is 0 if k > j
                                 continue;
 
                             state.ge[parentType] = state.ge[parentType]

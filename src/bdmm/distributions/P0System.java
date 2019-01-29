@@ -77,14 +77,13 @@ public class P0System implements FirstOrderDifferentialEquations {
 
 			for (int j = 0; j< nTypes; j++){
 
-			    if (j==i)
-			        continue;
+			    if (j!=i) {
+					yDot[i] += b_ij[interval][i][j]*y[i];
+					yDot[i] -= b_ij[interval][i][j]*y[i]*y[j];
 
-                yDot[i] += b_ij[interval][i][j]*y[i];
-                yDot[i] -= b_ij[interval][i][j]*y[i]*y[j];
-
-                yDot[i] += M[interval][i][j] * y[i];
-                yDot[i] -= M[interval][i][j] * y[j];
+					yDot[i] += M[interval][i][j] * y[i];
+					yDot[i] -= M[interval][i][j] * y[j];
+				}
 
 				for (int k = 0; k < nTypes; k++) {
 					yDot[i] += clado_b[interval][i][j][k]*y[i];

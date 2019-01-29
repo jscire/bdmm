@@ -161,6 +161,70 @@ public class ParameterizationTest {
         Assert.assertEquals(2.0, parameterization.getCladogeneticBirthRates()[intervalIdx][1][0][0], TOLERANCE);
         Assert.assertEquals(1.0, parameterization.getCladogeneticBirthRates()[intervalIdx][1][1][0], TOLERANCE);
 
+        /*
+         * Input of speciation rates using triplets with 6 types
+         */
+        a = new Triplet();
+        a.initByName("parentState", 0,
+                "leftChildState", 3,
+                "rightChildState",4,
+                "tripletType", "value1");
+        b = new Triplet();
+        b.initByName("parentState", 0,
+                "leftChildState", 3,
+                "rightChildState",3,
+                "tripletType", "value2");
+        c = new Triplet();
+        c.initByName("parentState", 1,
+                "leftChildState", 0,
+                "rightChildState",5,
+                "tripletType", "value3");
+        d = new Triplet();
+        d.initByName("parentState", 5,
+                "leftChildState", 5,
+                "rightChildState",2,
+                "tripletType", "value2");
+        Triplet e = new Triplet();
+        e.initByName("parentState", 3,
+                "leftChildState", 1,
+                "rightChildState",5,
+                "tripletType", "value4");
+        tripletList = Arrays.asList(a,b,c,d, e);
+        tripletTypeList = new String[]{"value1", "value2", "value3", "value4"};
+
+        parameterization = new CanonicalParameterization();
+
+        parameterization.initByName(
+                "nTypes", 6,
+                "origin", originParam,
+                "birthRate", new SkylineVectorParameter(
+                        null,
+                        new RealParameter("3.0"), 6),
+                "deathRate", new SkylineVectorParameter(
+                        null,
+                        new RealParameter("2.0"), 6),
+                "samplingRate", new SkylineVectorParameter(
+                        null,
+                        new RealParameter("1.5"), 6),
+                "removalProb", new SkylineVectorParameter(
+                        null,
+                        new RealParameter("1.0"), 6),
+                "cladogeneticBirthRate", new Skyline3DMatrixParameter(
+                        null,
+                        new RealParameter("1.0 2.0 3.0 4.0"), 6, tripletList, tripletTypeList)
+        );
+
+        //Test whether values in cladogentic speciation rates matrix are indeed what they were specified to be in the inputs.
+        Assert.assertEquals(1.0, parameterization.getCladogeneticBirthRates()[intervalIdx][0][4][3], TOLERANCE);
+        Assert.assertEquals(2.0, parameterization.getCladogeneticBirthRates()[intervalIdx][0][3][3], TOLERANCE);
+        Assert.assertEquals(3.0, parameterization.getCladogeneticBirthRates()[intervalIdx][1][5][0], TOLERANCE);
+        Assert.assertEquals(2.0, parameterization.getCladogeneticBirthRates()[intervalIdx][5][5][2], TOLERANCE);
+        Assert.assertEquals(4.0, parameterization.getCladogeneticBirthRates()[intervalIdx][3][5][1], TOLERANCE);
+        Assert.assertEquals(0.0, parameterization.getCladogeneticBirthRates()[intervalIdx][3][1][5], TOLERANCE);
+        Assert.assertEquals(0.0, parameterization.getCladogeneticBirthRates()[intervalIdx][3][3][1], TOLERANCE);
+        Assert.assertEquals(0.0, parameterization.getCladogeneticBirthRates()[intervalIdx][0][1][0], TOLERANCE);
+        Assert.assertEquals(0.0, parameterization.getCladogeneticBirthRates()[intervalIdx][0][2][0], TOLERANCE);
+
     }
 
 

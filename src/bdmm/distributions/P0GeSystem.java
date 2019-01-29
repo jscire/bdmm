@@ -39,16 +39,17 @@ public class P0GeSystem extends P0System {
 
 			for (int j = 0; j < nTypes; j++){
 
-			    if (i==j)
-			        continue;
+			    if (i!=j) {
 
-                yDot[i] += b_ij[interval][i][j]*y[i];
-                yDot[i] -= b_ij[interval][i][j]*y[i]*y[j];
+                    yDot[i] += b_ij[interval][i][j] * y[i];
+                    yDot[i] -= b_ij[interval][i][j] * y[i] * y[j];
 
-                yDot[i] += M[interval][i][j] * y[i];
-                yDot[i] -= M[interval][i][j] * y[j];
+                    yDot[i] += M[interval][i][j] * y[i];
+                    yDot[i] -= M[interval][i][j] * y[j];
+                }
 
                 for (int k = 0; k < nTypes; k++) {
+
                     yDot[i] += clado_b[interval][i][j][k]*y[i];
                     yDot[i] -= clado_b[interval][i][j][k]*y[j]*y[k];
                 }
@@ -62,15 +63,14 @@ public class P0GeSystem extends P0System {
 
 			for (int j = 0; j< nTypes; j++){
 
-                if (i==j)
-			        continue;
+                if (i!=j) {
+                    yDot[nTypes + i] += b_ij[interval][i][j]*y[nTypes + i];
+                    yDot[nTypes + i] -= b_ij[interval][i][j] *
+                            (y[i]*y[nTypes + j] + y[j]*y[nTypes + i]);
 
-                yDot[nTypes + i] += b_ij[interval][i][j]*y[nTypes + i];
-                yDot[nTypes + i] -= b_ij[interval][i][j] *
-                        (y[i]*y[nTypes + j] + y[j]*y[nTypes + i]);
-
-                yDot[nTypes + i] += M[interval][i][j] * y[nTypes + i];
-                yDot[nTypes + i] -= M[interval][i][j] * y[nTypes + j];
+                    yDot[nTypes + i] += M[interval][i][j] * y[nTypes + i];
+                    yDot[nTypes + i] -= M[interval][i][j] * y[nTypes + j];
+                }
 
                 for (int k = 0; k < nTypes; k++) {
                     yDot[nTypes + i] += clado_b[interval][i][j][k]*y[nTypes + i];
@@ -130,6 +130,7 @@ public class P0GeSystem extends P0System {
             FirstOrderIntegrator integrator = new DormandPrince54Integrator(
                     integrationMinStep, integrationMaxStep,
                     absoluteToleranceVector, relativeToleranceVector);
+
             integrator.integrate(this, tStart, pgScaled.getEquation(), tEnd, integrationResults); // perform the integration step
 
             double[] pConditions = new double[n];

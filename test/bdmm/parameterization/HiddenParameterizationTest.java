@@ -18,7 +18,7 @@ public class HiddenParameterizationTest {
 		Parameterization parameterization = new HiddenParameterization();
 		parameterization.initByName(
 		        "nTypes", 4,
-		        "hiddenTraitFlag", new IntegerParameter("2 2"),
+		        "hiddenTraitFlag", new IntegerParameter("0 0"),
 		        "cidFlag", new IntegerParameter("1"),
 
                 "origin", originParam,
@@ -33,7 +33,7 @@ public class HiddenParameterizationTest {
                         new RealParameter("0.0"), 4),
                 "migrationRate", new SkylineMatrixParameter(
                         null,
-                        new RealParameter("0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2"), 4),
+                        new RealParameter("0.1 0.2 0.3 1.0 1.2 1.3 2.0 2.1 2.3 3.0 3.1 3.2"), 4),
                 "samplingRate", new SkylineVectorParameter(
                         null,
                         new RealParameter("1.5"), 4),

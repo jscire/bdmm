@@ -57,13 +57,11 @@ public class BirthDeathMigrationDistribution extends SpeciesTreeDistribution {
 
     public Input<Double> relativeToleranceInput = new Input<>("relTolerance",
             "relative tolerance for numerical integration",
-//            1e-7);
-            1e-6);
+            1e-7);
 
     public Input<Double> absoluteToleranceInput = new Input<>("absTolerance",
             "absolute tolerance for numerical integration",
-            1e-6 /*Double.MIN_VALUE*/);
-//            1e-100 /*Double.MIN_VALUE*/);
+            1e-100 /*Double.MIN_VALUE*/);
 
     public Input<Boolean> parallelizeInput = new Input<>(
             "parallelize",
@@ -824,7 +822,6 @@ public class BirthDeathMigrationDistribution extends SpeciesTreeDistribution {
     public List<String> getArguments() {
         return null;
     }
-
 
     @Override
     public List<String> getConditions() {

@@ -73,6 +73,23 @@ public class HiddenParameterization extends CanonicalParameterization {
 	public int getNHiddenTypes(){
 		return getNTypes()-getNObsTypes();
 	}
+
+	/**
+	 * Get the index of the hidden type corresponding to a given observed type.
+	 * -1 if given type has no corresponding hidden type
+	 */
+	public int getCorrespondingHiddenTypeIdx(int typeNr) {
+		if(hiddenTraitFlagInput.get().getValue(typeNr) == 0)
+			return -1;
+		else {
+			int hiddenTypeIdx = nObsTypes;
+			for (int i = 0; i < typeNr; i++) {
+				if(hiddenTraitFlagInput.get().getValue(i) != 0)
+					hiddenTypeIdx ++;
+			}
+			return hiddenTypeIdx;
+		}
+	}
 	
 	private void checkModel() {
 		if (hiddenTraitFlagInput.get().isDirtyCalculation() ||

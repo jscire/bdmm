@@ -1,5 +1,6 @@
 package bdmm.distributions;
 
+import bdmm.parameterization.HiddenParameterization;
 import bdmm.parameterization.Parameterization;
 import bdmm.util.Utils;
 import beast.core.Citation;
@@ -94,6 +95,7 @@ public class BirthDeathMigrationDistribution extends SpeciesTreeDistribution {
     private boolean[] isRhoTip;
 
     private Parameterization parameterization;
+    private  boolean isHiddenParameterization;
 
     private double[][] pInitialConditions;
 
@@ -109,6 +111,7 @@ public class BirthDeathMigrationDistribution extends SpeciesTreeDistribution {
     @Override
     public void initAndValidate() {
         parameterization = parameterizationInput.get();
+        isHiddenParameterization = parameterization instanceof HiddenParameterization;
 
         tree = treeInput.get();
 
@@ -340,18 +343,36 @@ public class BirthDeathMigrationDistribution extends SpeciesTreeDistribution {
                 }
             } else {
 
+                int correspondingHiddenTypeIdx = isHiddenParameterization? ((HiddenParameterization) parameterization).getCorrespondingHiddenTypeIdx(nodeType): -1;
+
                 if (isRhoTip[node.getNr()]) {
 
                     state.ge[nodeType] = new SmallNumber(
                             (system.r[intervalIdx][nodeType] + state.p0[nodeType]
                                     * (1 - system.r[intervalIdx][nodeType]))
                                     * system.rho[intervalIdx][nodeType]);
+
+                    if(correspondingHiddenTypeIdx > -1) { // leaf state has a corresponding hidden state
+
+                        state.ge[correspondingHiddenTypeIdx] = new SmallNumber(
+                                (system.r[intervalIdx][correspondingHiddenTypeIdx] + state.p0[correspondingHiddenTypeIdx]
+                                        * (1 - system.r[intervalIdx][correspondingHiddenTypeIdx]))
+                                        * system.rho[intervalIdx][correspondingHiddenTypeIdx]);
+                    }
                 } else {
                     state.ge[nodeType] = new SmallNumber(
                             (system.r[intervalIdx][nodeType] + state.p0[nodeType]
                                     * (1 - system.r[intervalIdx][nodeType]))
                                     * system.s[intervalIdx][nodeType]);
                     // with SA: ψ_i(r + (1 − r)p_i(τ))
+
+                    if(correspondingHiddenTypeIdx > -1) { // leaf state has a corresponding hidden state
+
+                        state.ge[correspondingHiddenTypeIdx] = new SmallNumber(
+                                (system.r[intervalIdx][correspondingHiddenTypeIdx] + state.p0[correspondingHiddenTypeIdx]
+                                        * (1 - system.r[intervalIdx][correspondingHiddenTypeIdx]))
+                                        * system.s[intervalIdx][correspondingHiddenTypeIdx]);
+                    }
                 }
 
             }
@@ -397,12 +418,24 @@ public class BirthDeathMigrationDistribution extends SpeciesTreeDistribution {
                         }
                     }
                 } else {
+
+                    int correspondingHiddenTypeIdx = isHiddenParameterization? ((HiddenParameterization) parameterization).getCorrespondingHiddenTypeIdx(saNodeType): -1;
+
                     if (!isRhoTip[node.getChild(childIndex ^ 1).getNr()]) {
 
                         state.p0[saNodeType] = g.p0[saNodeType];
                         state.ge[saNodeType] = g.ge[saNodeType]
                                 .scalarMultiplyBy(system.s[intervalIdx][saNodeType]
                                         * (1 - system.r[intervalIdx][saNodeType]));
+
+                        if(correspondingHiddenTypeIdx > -1) { // SA state has corresponding hidden state
+
+                            state.p0[correspondingHiddenTypeIdx] = g.p0[correspondingHiddenTypeIdx];
+                            state.ge[correspondingHiddenTypeIdx] = g.ge[correspondingHiddenTypeIdx]
+                                    .scalarMultiplyBy(system.s[intervalIdx][correspondingHiddenTypeIdx]
+                                            * (1 - system.r[intervalIdx][correspondingHiddenTypeIdx]));
+                        }
+
 
 //					System.out.println("SA but not rho sampled");
 
@@ -412,6 +445,15 @@ public class BirthDeathMigrationDistribution extends SpeciesTreeDistribution {
                         state.ge[saNodeType] = g.ge[saNodeType]
                                 .scalarMultiplyBy(system.rho[intervalIdx][saNodeType]
                                         * (1 - system.r[intervalIdx][saNodeType]));
+
+                        if(correspondingHiddenTypeIdx > -1) { // SA state has corresponding hidden state
+
+                            state.p0[correspondingHiddenTypeIdx] = g.p0[correspondingHiddenTypeIdx]
+                                    * (1 - system.rho[intervalIdx][correspondingHiddenTypeIdx]);
+                            state.ge[correspondingHiddenTypeIdx] = g.ge[correspondingHiddenTypeIdx]
+                                    .scalarMultiplyBy(system.rho[intervalIdx][correspondingHiddenTypeIdx]
+                                            * (1 - system.r[intervalIdx][correspondingHiddenTypeIdx]));
+                        }
 
                     }
                 }

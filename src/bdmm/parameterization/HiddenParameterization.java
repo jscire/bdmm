@@ -34,15 +34,13 @@ public class HiddenParameterization extends CanonicalParameterization {
 	
 	@Override
     public void initAndValidate() {
+
 		typeSet = typeSetInput.get();
 		nTypes = typeSet.getNTypes();
 		if(nTypes % 2 != 0)
 			throw new IllegalArgumentException("nTypes input must be an even number. nTypes should be twice the number of observed types, regardless of how which of the possible hidden types are allowed.");
 
 		nObsTypes = nTypes/2; // initialize with all hidden types
-
-		if(hiddenTraitFlagInput.get().getValues().length!= nObsTypes)
-			throw new IllegalArgumentException("The length of hiddenTraitFlag must match the number of observed types.");
 
 		isMigRateSymmetric = new boolean[nObsTypes];
 		omittedRates = new double[nTypes];

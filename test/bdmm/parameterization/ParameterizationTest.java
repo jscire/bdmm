@@ -82,7 +82,7 @@ public class ParameterizationTest {
          * Input of speciation rates without using triplets
          */
         parameterization.initByName(
-                "nTypes", 2,
+                "typeSet", new TypeSet(2),
                 "origin", originParam,
                 "birthRate", new SkylineVectorParameter(
                         null,
@@ -136,7 +136,7 @@ public class ParameterizationTest {
         String[] tripletTypeList = new String[]{"value1", "value2"};
 
         parameterization.initByName(
-                "nTypes", 2,
+                "typeSet", new TypeSet(2),
                 "origin", originParam,
                 "birthRate", new SkylineVectorParameter(
                         null,
@@ -195,7 +195,7 @@ public class ParameterizationTest {
         parameterization = new CanonicalParameterization();
 
         parameterization.initByName(
-                "nTypes", 6,
+                "typeSet", new TypeSet(6),
                 "origin", originParam,
                 "birthRate", new SkylineVectorParameter(
                         null,

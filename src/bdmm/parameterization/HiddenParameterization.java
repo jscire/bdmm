@@ -34,7 +34,8 @@ public class HiddenParameterization extends CanonicalParameterization {
 	
 	@Override
     public void initAndValidate() {
-		nTypes = nTypesInput.get();
+		typeSet = typeSetInput.get();
+		nTypes = typeSet.getNTypes();		
 		nObsTypes = nTypes/2; // initialize with all hidden types
 
 		isMigRateSymmetric = new boolean[nObsTypes];
@@ -264,31 +265,31 @@ public class HiddenParameterization extends CanonicalParameterization {
 	@Override
     protected void validateParameterTypeCounts() {
         if ( (birthRateInput.get().getNTypes() != hiddenTraitFlagInput.get().getDimension()*2) || 
-        		(birthRateInput.get().getNTypes() != nTypesInput.get()) )
+        		(birthRateInput.get().getNTypes() != getNTypes()) )
             throw new IllegalArgumentException("Birth rate skyline type count does not match type count of model or hidden type flag.");
 
         if ( (deathRateInput.get().getNTypes() != hiddenTraitFlagInput.get().getDimension()*2) || 
-        		(deathRateInput.get().getNTypes() != nTypesInput.get()) )
+        		(deathRateInput.get().getNTypes() != getNTypes()) )
             throw new IllegalArgumentException("Death rate skyline type count does not match type count of model or hidden type flag.");
 
         if ( (samplingRateInput.get().getNTypes() != hiddenTraitFlagInput.get().getDimension()*2) || 
-        		(samplingRateInput.get().getNTypes() != nTypesInput.get()) )
+        		(samplingRateInput.get().getNTypes() != getNTypes()) )
             throw new IllegalArgumentException("Sampling rate skyline type count does not match type count of model or hidden type flag.");
 
         if ( (migRateInput.get() != null && migRateInput.get().getNTypes() != hiddenTraitFlagInput.get().getDimension()*2) ||
-        		(migRateInput.get().getNTypes() != nTypesInput.get()) )
+        		(migRateInput.get().getNTypes() != getNTypes()) )
             throw new IllegalArgumentException("Migration rate skyline type count does not match type count of model.");
 
         if ( (crossBirthRateInput.get().getNTypes() != hiddenTraitFlagInput.get().getDimension()*2) || 
-        		(crossBirthRateInput.get().getNTypes() != nTypesInput.get()) )
+        		(crossBirthRateInput.get().getNTypes() != getNTypes()) )
             throw new IllegalArgumentException("Birth rate among demes skyline type count does not match type count of model or hidden type flag.");
 
         if ( (removalProbInput.get().getNTypes() != hiddenTraitFlagInput.get().getDimension()*2) || 
-        		(removalProbInput.get().getNTypes() != nTypesInput.get()) )
+        		(removalProbInput.get().getNTypes() != getNTypes()) )
             throw new IllegalArgumentException("Removal prob skyline type count does not match type count of model or hidden type flag.");
 
         if ( (rhoSamplingInput.get() != null && rhoSamplingInput.get().getNTypes() != hiddenTraitFlagInput.get().getDimension()*2) ||
-        		(migRateInput.get().getNTypes() != nTypesInput.get()) )
+        		(migRateInput.get().getNTypes() != getNTypes()) )
             throw new IllegalArgumentException("Rho sampling type count does not match type count of model.");
     }
 }

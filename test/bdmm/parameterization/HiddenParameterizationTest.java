@@ -17,9 +17,9 @@ public class HiddenParameterizationTest {
 
 		Parameterization parameterization = new HiddenParameterization();
 		parameterization.initByName(
-		        "nTypes", 4,
-		        "hiddenTraitFlag", new IntegerParameter("0 0"),
-		        "cidFlag", new IntegerParameter("1"),
+		        "typeSet", new TypeSet(4),
+		        "hiddenTraitFlag", new IntegerParameter("2 2"),
+		        "cidFlag", new IntegerParameter("0"),
 
                 "origin", originParam,
                 "birthRate", new SkylineVectorParameter(

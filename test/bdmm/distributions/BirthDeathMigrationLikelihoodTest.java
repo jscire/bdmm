@@ -1470,7 +1470,7 @@ public class BirthDeathMigrationLikelihoodTest {
 				"tripletType", "SUBSYMPATRY");
 
 		List<Triplet> tripletList = Arrays.asList(jTriplet1,jTriplet2,vTriplet1,ssTriplet1, ssTriplet2);
-		String[] tripletTypeList = new String[]{"JUMPDISPERSAL", "VICARIANCE", "SUBSYMPATRY"};
+		String tripletOrder = "JUMPDISPERSAL VICARIANCE SUBSYMPATRY";
 
 		Parameterization parameterization = new CanonicalParameterization();
 		parameterization.initByName(
@@ -1499,8 +1499,8 @@ public class BirthDeathMigrationLikelihoodTest {
 						new RealParameter("1.0"), numStates),
 				"cladogeneticBirthRate", new Skyline3DMatrixParameter(
 						null,
-						new RealParameter("0.0 0.05370370666666666 0.05370370666666666"), numStates, tripletList, tripletTypeList));
-//						new RealParameter("0.0 0.0 0.05370370666666666"), numStates, tripletList, tripletTypeList));
+						new RealParameter("0.0 0.05370370666666666 0.05370370666666666"), numStates, tripletList, tripletOrder));
+//						new RealParameter("0.0 0.0 0.05370370666666666"), numStates, tripletList, tripletOrder));
 
 
 		BirthDeathMigrationDistribution density = new BirthDeathMigrationDistribution();
@@ -1570,7 +1570,7 @@ public class BirthDeathMigrationLikelihoodTest {
 
 
 		List<Triplet> tripletList = Arrays.asList(triplet1,triplet2, triplet3, triplet4, triplet5, triplet6);
-		String[] tripletTypeList = new String[]{"uniqueRate"};
+		String tripletOrder = "uniqueRate";
 
 		Parameterization parameterization = new CanonicalParameterization();
 		parameterization.initByName(
@@ -1599,7 +1599,7 @@ public class BirthDeathMigrationLikelihoodTest {
 						new RealParameter("1.0"), numStates),
 				"cladogeneticBirthRate", new Skyline3DMatrixParameter(
 						null,
-						new RealParameter("0.033333333333333"), numStates, tripletList, tripletTypeList));
+						new RealParameter("0.033333333333333"), numStates, tripletList, tripletOrder));
 
 
 		BirthDeathMigrationDistribution density = new BirthDeathMigrationDistribution();

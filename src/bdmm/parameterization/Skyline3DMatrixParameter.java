@@ -14,7 +14,7 @@ import beast.core.parameter.RealParameter;
 public class Skyline3DMatrixParameter extends SkylineParameter {
 
     public Input<List<Triplet>> tripletsInput = new Input<>("tripletList", "List of Triplet objects that contain states of a parent and its children, and the triplet type", new ArrayList<>());
-	public Input<String[]> tripletOrderInput = new Input<>("tripletTypeList", "List of triplet type strings, one per real parameter (rate) in a single interval (order will be repeated in all intervals).");
+	public Input<String> tripletOrderInput = new Input<>("tripletOrder", "Space-delimited string that contains the tags of the rates, in the order in which they are in the rateValues input (order will be repeated in all intervals).");
     
 	int nTypes;
 
@@ -44,7 +44,7 @@ public class Skyline3DMatrixParameter extends SkylineParameter {
                                     RealParameter rateValuesParam,
                                     int nTypes,
                                     List<Triplet> speciationTriplets,
-                                    String[] tripletsType) {
+                                    String tripletsType) {
         changeTimesInput.setValue(changeTimesParam, this);
         rateValuesInput.setValue(rateValuesParam, this);
         typeSetInput.setValue(new TypeSet(nTypes), this);
@@ -78,7 +78,7 @@ public class Skyline3DMatrixParameter extends SkylineParameter {
                  */
                 triplets = tripletsInput.get(); //TODO make sure all triplets have a valid triplet name (stored in tripletOrder below)
 
-                tripletOrder = tripletOrderInput.get();
+                tripletOrder = tripletOrderInput.get().split(" ");
                 if (tripletOrder.length < elementsPerMatrix)
                     throw new IllegalArgumentException("Misspecification: the unique number of tags in tripletOrder is smaller than the number of elements in the rate input.");
             } else {

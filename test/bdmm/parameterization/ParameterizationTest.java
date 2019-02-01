@@ -133,7 +133,7 @@ public class ParameterizationTest {
                 "rightChildState",0,
                 "tripletType", "value1");
         List<Triplet> tripletList = Arrays.asList(a,b,c,d);
-        String[] tripletTypeList = new String[]{"value1", "value2"};
+        String tripletOrder = "value1 value2";
 
         parameterization.initByName(
                 "typeSet", new TypeSet(2),
@@ -152,7 +152,7 @@ public class ParameterizationTest {
                         new RealParameter("1.0"), 2),
                 "cladogeneticBirthRate", new Skyline3DMatrixParameter(
                         null,
-                        new RealParameter("1.0 2.0"), 2, tripletList, tripletTypeList)
+                        new RealParameter("1.0 2.0"), 2, tripletList, tripletOrder)
         );
 
         //Test whether values in cladogentic speciation rates matrix are indeed what they were specified to be in the inputs.
@@ -190,7 +190,7 @@ public class ParameterizationTest {
                 "rightChildState",5,
                 "tripletType", "value4");
         tripletList = Arrays.asList(a,b,c,d, e);
-        tripletTypeList = new String[]{"value1", "value2", "value3", "value4"};
+        tripletOrder = "value1 value2 value3 value4";
 
         parameterization = new CanonicalParameterization();
 
@@ -211,7 +211,7 @@ public class ParameterizationTest {
                         new RealParameter("1.0"), 6),
                 "cladogeneticBirthRate", new Skyline3DMatrixParameter(
                         null,
-                        new RealParameter("1.0 2.0 3.0 4.0"), 6, tripletList, tripletTypeList)
+                        new RealParameter("1.0 2.0 3.0 4.0"), 6, tripletList, tripletOrder)
         );
 
         //Test whether values in cladogentic speciation rates matrix are indeed what they were specified to be in the inputs.

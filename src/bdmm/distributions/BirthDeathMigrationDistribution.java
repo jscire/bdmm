@@ -458,6 +458,11 @@ public class BirthDeathMigrationDistribution extends SpeciesTreeDistribution {
                 }
             } else {   // birth / infection event
 
+                //TODO remove
+//                if (node.getHeight() == 2.9091669262999957) {
+//                    System.out.println("There is a problem here.");
+//                }
+
                 int indexFirstChild = 0;
                 if (node.getChild(1).getNr() > node.getChild(0).getNr())
                     indexFirstChild = 1; // always start with the same child to avoid numerical differences
@@ -499,6 +504,7 @@ public class BirthDeathMigrationDistribution extends SpeciesTreeDistribution {
                             parameterization.getTotalProcessLength() - node.getChild(indexSecondChild).getHeight(),
                             system, depth + 1);
                 }
+
 
 
                 if (debug) debugMessage("Infection at time " + tBottom, depth);

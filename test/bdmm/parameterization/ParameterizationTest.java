@@ -113,24 +113,24 @@ public class ParameterizationTest {
          * Input of speciation rates using triplets
          */
         Triplet a = new Triplet();
-        a.initByName("parentState", 0,
-                    "leftChildState", 0,
-                    "rightChildState",1,
+        a.initByName("parentState", "0",
+                    "leftChildState", "0",
+                    "rightChildState","1",
                     "tripletType", "value1");
         Triplet b = new Triplet();
-        b.initByName("parentState", 0,
-                "leftChildState", 1,
-                "rightChildState",1,
+        b.initByName("parentState", "0",
+                "leftChildState", "1",
+                "rightChildState","1",
                 "tripletType", "value2");
         Triplet c = new Triplet();
-        c.initByName("parentState", 1,
-                "leftChildState", 0,
-                "rightChildState",0,
+        c.initByName("parentState", "1",
+                "leftChildState", "0",
+                "rightChildState","0",
                 "tripletType", "value2");
         Triplet d = new Triplet();
-        d.initByName("parentState", 1,
-                "leftChildState", 1,
-                "rightChildState",0,
+        d.initByName("parentState", "1",
+                "leftChildState", "1",
+                "rightChildState","0",
                 "tripletType", "value1");
         List<Triplet> tripletList = Arrays.asList(a,b,c,d);
         String tripletOrder = "value1 value2";
@@ -165,29 +165,29 @@ public class ParameterizationTest {
          * Input of speciation rates using triplets with 6 types
          */
         a = new Triplet();
-        a.initByName("parentState", 0,
-                "leftChildState", 3,
-                "rightChildState",4,
+        a.initByName("parentState", "0",
+                "leftChildState", "3",
+                "rightChildState","4",
                 "tripletType", "value1");
         b = new Triplet();
-        b.initByName("parentState", 0,
-                "leftChildState", 3,
-                "rightChildState",3,
+        b.initByName("parentState", "0",
+                "leftChildState", "3",
+                "rightChildState","3",
                 "tripletType", "value2");
         c = new Triplet();
-        c.initByName("parentState", 1,
-                "leftChildState", 0,
-                "rightChildState",5,
+        c.initByName("parentState", "1",
+                "leftChildState", "0",
+                "rightChildState","5",
                 "tripletType", "value3");
         d = new Triplet();
-        d.initByName("parentState", 5,
-                "leftChildState", 5,
-                "rightChildState",2,
+        d.initByName("parentState", "5",
+                "leftChildState", "5",
+                "rightChildState","2",
                 "tripletType", "value2");
         Triplet e = new Triplet();
-        e.initByName("parentState", 3,
-                "leftChildState", 1,
-                "rightChildState",5,
+        e.initByName("parentState", "3",
+                "leftChildState", "1",
+                "rightChildState","5",
                 "tripletType", "value4");
         tripletList = Arrays.asList(a,b,c,d, e);
         tripletOrder = "value1 value2 value3 value4";

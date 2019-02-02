@@ -28,18 +28,9 @@ public class Skyline3DMatrixParameter extends SkylineParameter {
     private String[] tripletOrder;
     private HashMap<String, Integer> tripletTypeRealParameterMap = new HashMap<>(); // ctor populates this
 
+    private TypeSet typeSet;
+
     public Skyline3DMatrixParameter() { }
-
-    public Skyline3DMatrixParameter(RealParameter changeTimesParam,
-                                    RealParameter rateValuesParam) {
-        super(changeTimesParam, rateValuesParam);
-    }
-
-    public Skyline3DMatrixParameter(RealParameter changeTimesParam,
-                                    RealParameter rateValuesParam,
-                                    int nTypes) {
-        super(changeTimesParam, rateValuesParam, nTypes);
-    }
 
     public Skyline3DMatrixParameter(RealParameter changeTimesParam,
                                     RealParameter rateValuesParam,
@@ -71,6 +62,7 @@ public class Skyline3DMatrixParameter extends SkylineParameter {
 
         if (typeSetInput.get() != null) {
             nTypes = typeSetInput.get().getNTypes();
+            typeSet = typeSetInput.get();
 
 
             if(tripletsInput.get() != null) {
@@ -90,7 +82,7 @@ public class Skyline3DMatrixParameter extends SkylineParameter {
                 }
             }
         } else {
-            throw new IllegalArgumentException("Number of types must be input when using Skyline3DMatrixParameter"); //TODO implement a way to infer the number of types
+            throw new IllegalArgumentException("TypeSet must be input when using Skyline3DMatrixParameter"); //TODO implement a way to infer the number of types
         }
 
         values = new double[nIntervals][nTypes][nTypes][nTypes];
@@ -169,10 +161,10 @@ public class Skyline3DMatrixParameter extends SkylineParameter {
     	int i,j,k, tripletTypeIdx;
     	String tripletType;
     	for (Triplet triplet: triplets) {
-    		int[] types = triplet.getTriplet();
-    		i = types[0];
-    		j = Math.max(types[1], types[2]); // j is always greater or equal to k, b_ijk is set to 0 if k>j.
-    		k = Math.min(types[1], types[2]);
+    		String[] types = triplet.getTriplet();
+    		i = typeSet.getTypeIndex(types[0]);
+    		j = Math.max(typeSet.getTypeIndex(types[1]), typeSet.getTypeIndex(types[2])); // j is always greater or equal to k, b_ijk is set to 0 if k>j.
+    		k = Math.min(typeSet.getTypeIndex(types[1]), typeSet.getTypeIndex(types[2]));
     		tripletType = triplet.getTripletType();
     		tripletTypeIdx = tripletTypeRealParameterMap.get(tripletType);
     		

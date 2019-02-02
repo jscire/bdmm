@@ -11,7 +11,7 @@ public class Utils {
 
 
 //    public final static double globalPrecisionThreshold = 1e-10;
-    public final static double globalPrecisionThreshold = 1e-8; // setting it to 1E-8 to accommodate the precision in the sample dates of the claSSE unit tests
+    public final static double globalPrecisionThreshold = 2e-8; // setting it to 1E-8 to accommodate the precision in the sample dates of the claSSE unit tests
     //TODO introduce a second threshold specifically for determining if samples are rho-samples, that would be relative to the overall tree length?
 
 

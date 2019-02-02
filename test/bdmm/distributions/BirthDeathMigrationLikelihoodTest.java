@@ -1444,29 +1444,29 @@ public class BirthDeathMigrationLikelihoodTest {
 		String newick = "(((Human[&state=1]:1.0,Chimp[&state=1]:1.0):1.0,Gorilla[&state=1]:2.0):1.0,Orang[&state=2]:3.0);";
 
 		Triplet jTriplet1 = new Triplet();
-		jTriplet1.initByName("parentState", 1,
-				"leftChildState", 1,
-				"rightChildState",2,
+		jTriplet1.initByName("parentState", "1",
+				"leftChildState", "1",
+				"rightChildState","2",
 				"tripletType", "JUMPDISPERSAL");
 		Triplet jTriplet2 = new Triplet();
-		jTriplet2.initByName("parentState", 2,
-				"leftChildState", 1,
-				"rightChildState",2,
+		jTriplet2.initByName("parentState", "2",
+				"leftChildState", "1",
+				"rightChildState","2",
 				"tripletType", "JUMPDISPERSAL");
 		Triplet vTriplet1 = new Triplet();
-		vTriplet1.initByName("parentState", 3,
-				"leftChildState", 1,
-				"rightChildState",2,
+		vTriplet1.initByName("parentState", "3",
+				"leftChildState", "1",
+				"rightChildState","2",
 				"tripletType", "VICARIANCE");
 		Triplet ssTriplet1 = new Triplet();
-		ssTriplet1.initByName("parentState", 3,
-				"leftChildState", 1,
-				"rightChildState",3,
+		ssTriplet1.initByName("parentState", "3",
+				"leftChildState", "1",
+				"rightChildState","3",
 				"tripletType", "SUBSYMPATRY");
 		Triplet ssTriplet2 = new Triplet();
-		ssTriplet2.initByName("parentState", 3,
-				"leftChildState", 2,
-				"rightChildState",3,
+		ssTriplet2.initByName("parentState", "3",
+				"leftChildState", "2",
+				"rightChildState","3",
 				"tripletType", "SUBSYMPATRY");
 
 		List<Triplet> tripletList = Arrays.asList(jTriplet1,jTriplet2,vTriplet1,ssTriplet1, ssTriplet2);
@@ -1538,34 +1538,34 @@ public class BirthDeathMigrationLikelihoodTest {
 				"sp36[&state=1]:1.989124199):4.901677029):5.196429383):3.492195269):2.878773551,sp4[&state=0]:18.45819943):1.998060738);";
 
 		Triplet triplet1 = new Triplet();
-		triplet1.initByName("parentState", 3,
-				"leftChildState", 1,
-				"rightChildState",3,
+		triplet1.initByName("parentState", "3",
+				"leftChildState", "1",
+				"rightChildState","3",
 				"tripletType", "uniqueRate");
 		Triplet triplet2 = new Triplet();
-		triplet2.initByName("parentState", 3,
-				"leftChildState", 2,
-				"rightChildState",3,
+		triplet2.initByName("parentState", "3",
+				"leftChildState", "2",
+				"rightChildState","3",
 				"tripletType", "uniqueRate");
 		Triplet triplet3 = new Triplet();
-		triplet3.initByName("parentState", 3,
-				"leftChildState", 3,
-				"rightChildState",1,
+		triplet3.initByName("parentState", "3",
+				"leftChildState", "3",
+				"rightChildState","1",
 				"tripletType", "uniqueRate");
 		Triplet triplet4 = new Triplet();
-		triplet4.initByName("parentState", 3,
-				"leftChildState", 3,
-				"rightChildState",2,
+		triplet4.initByName("parentState", "3",
+				"leftChildState", "3",
+				"rightChildState","2",
 				"tripletType", "uniqueRate");
 		Triplet triplet5 = new Triplet();
-		triplet5.initByName("parentState", 3,
-				"leftChildState", 1,
-				"rightChildState",2,
+		triplet5.initByName("parentState", "3",
+				"leftChildState", "1",
+				"rightChildState","2",
 				"tripletType", "uniqueRate");
 		Triplet triplet6 = new Triplet();
-		triplet6.initByName("parentState", 3,
-				"leftChildState", 2,
-				"rightChildState",1,
+		triplet6.initByName("parentState", "3",
+				"leftChildState", "2",
+				"rightChildState","1",
 				"tripletType", "uniqueRate");
 
 

@@ -98,7 +98,6 @@ public class Skyline3DMatrixParameter extends SkylineParameter {
         if(tripletsInput.get() != null) {
             populateValues();
         } else {
-            //TODO check that the value assignment done here, from the RealParameter to the 3 dimensional array, is correct
             int idx=0;
             for (int interval=0; interval<nIntervals; interval++) {
                 for (int i=0; i<nTypes; i++) {
@@ -120,7 +119,6 @@ public class Skyline3DMatrixParameter extends SkylineParameter {
                 }
             }
         }
-
     }
 
     /**
@@ -180,8 +178,10 @@ public class Skyline3DMatrixParameter extends SkylineParameter {
 
         for (int interval=0; interval<nIntervals; interval++) {
             for (int i=0; i<nTypes; i++) {
-                System.arraycopy(values[interval][i], 0,
-                        storedValues[interval][i], 0, nTypes);
+                for (int j=0; j<nTypes; j++) {
+                    System.arraycopy(values[interval][i][j], 0,
+                            storedValues[interval][i][j], 0, nTypes);
+                }
             }
         }
     }

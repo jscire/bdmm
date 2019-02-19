@@ -206,7 +206,7 @@ public abstract class Parameterization extends CalculationNode {
             double[][] crossBirthRateMatrix = getCrossBirthRateValues(t);
             for (int i=0; i<nTypes; i++) {
                 System.arraycopy(migRateMatrix[i], 0, migRates[interval][i], 0, nTypes);
-                 System.arraycopy(crossBirthRateMatrix[i], 0, crossBirthRates[interval][i], 0, nTypes);
+                System.arraycopy(crossBirthRateMatrix[i], 0, crossBirthRates[interval][i], 0, nTypes);
             }
 
             double[][][] cladogeneticBirthRate3DMatrix = getCladogeneticBirthRateValues(t);

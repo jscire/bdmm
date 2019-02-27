@@ -56,6 +56,10 @@ public class ODESystem implements FirstOrderDifferentialEquations, EventHandler 
 
 			for (int j = 0; j < nTypes; j++){
 
+                for (int k = 0; k < nTypes; k++) {
+                    yDot[i] += param.getCladogeneticBirthRates()[interval][i][j][k] * (y[i] - y[j]*y[k]);
+                }
+
 			    if (i==j)
 			        continue;
 
@@ -71,6 +75,11 @@ public class ODESystem implements FirstOrderDifferentialEquations, EventHandler 
                     - 2*param.getBirthRates()[interval][i]*y[nTypes+i]*y[i];
 
 			for (int j = 0; j< nTypes; j++) {
+
+                for (int k = 0; k < nTypes; k++) {
+                    yDot[nTypes + i] = param.getCladogeneticBirthRates()[interval][i][j][k]
+                            * (y[nTypes + i] - (y[j]*y[nTypes + k] + y[k]*y[nTypes + j]));
+                }
 
                 if (i==j)
 			        continue;

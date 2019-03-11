@@ -211,8 +211,8 @@ public class HiddenParameterization extends CanonicalParameterization {
 				 * the bottom-left value of values[][] (i.e., allUntouchedMatrixRates)
 				 */
 				if (i2 >= nObsTypes && j2 < nObsTypes && isMigRateSymmetric[j2]) {
-					allUntouchedMatrixRates[i2+nObsTypes][j2] =
-							allUntouchedMatrixRates[j2+nObsTypes][i2];
+					allUntouchedMatrixRates[i2][j2] =
+							allUntouchedMatrixRates[i2-nObsTypes][j2+nObsTypes];
 				}
 					
 				// now fill in!

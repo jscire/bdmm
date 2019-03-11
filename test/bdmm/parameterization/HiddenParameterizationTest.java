@@ -18,7 +18,7 @@ public class HiddenParameterizationTest {
 		Parameterization parameterization = new HiddenParameterization();
 		parameterization.initByName(
 		        "typeSet", new TypeSet(4),
-		        "hiddenTraitFlag", new IntegerParameter("2 2"),
+		        "hiddenTraitFlag", new IntegerParameter("1 2"),
 		        "cidFlag", new IntegerParameter("0"),
 
                 "origin", originParam,
